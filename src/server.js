@@ -36,4 +36,24 @@ app.get("/", (request, response) => {
   response.json({ message: "Hello!" });
 });
 
+// Configure database URL
+const mongoose = require("mongoose");
+let databaseURL = "";
+switch (process.env.NODE_ENV.toLowerCase()) {
+  case "test":
+    databaseURL = process.env.TEST_DATABASE_URL;
+    break;
+  case "development":
+    databaseURL = process.env.DEV_DATABASE_URL;
+    break;
+  case "production":
+    databaseURL = process.env.DATABASE_URL;
+    break;
+  default:
+    console.error(
+      "Incorrect JavaScript environment specified, database will not be connected"
+    );
+    break;
+}
+
 module.exports = { HOST, PORT, app };
