@@ -56,4 +56,15 @@ switch (process.env.NODE_ENV.toLowerCase()) {
     break;
 }
 
+// Connect to database
+const { connectDatabase } = require("./database");
+connectDatabase(databaseURL)
+  .then(() => {
+    console.log("Database connected successfully!");
+  })
+  .catch((error) => {
+    console.log(`An error occurred connecting to the database:
+    ${error}`);
+  });
+
 module.exports = { HOST, PORT, app };
