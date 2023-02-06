@@ -8,5 +8,9 @@ describe("Server request", () => {
       const response = await request(app).get("/");
       expect(response.statusCode).toEqual(200);
     });
+    it("Returns 'Hello!'", async () => {
+      const response = await request(app).get("/");
+      expect(response.body.message).toEqual("Hello!");
+    });
   });
 });
