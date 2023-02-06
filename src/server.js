@@ -32,4 +32,8 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
+app.get("/", (request, response) => {
+  response.json({ message: "Hello!" });
+});
+
 module.exports = { HOST, PORT, app };
