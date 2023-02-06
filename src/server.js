@@ -32,12 +32,7 @@ const corsOptions = {
 };
 app.use(cors(corsOptions));
 
-app.get("/", (request, response) => {
-  response.json({ message: "Hello!" });
-});
-
 // Configure database URL
-const mongoose = require("mongoose");
 let databaseURL = "";
 switch (process.env.NODE_ENV.toLowerCase()) {
   case "test":
@@ -57,6 +52,7 @@ switch (process.env.NODE_ENV.toLowerCase()) {
 }
 
 // Connect to database
+const mongoose = require("mongoose");
 const { connectDatabase } = require("./database");
 connectDatabase(databaseURL)
   .then(() => {
@@ -64,7 +60,18 @@ connectDatabase(databaseURL)
   })
   .catch((error) => {
     console.log(`An error occurred connecting to the database:
-    ${error}`);
+            ${error}`);
   });
+
+// Test index route
+app.get("/", (request, response) => {
+  response.json({ message: "Hello!" });
+});
+
+// Test database connection
+app.get("/databaseTest", (request, response) => {
+  const databaseState = mongoose.connection.readyState;
+  response.json({ readyState: databaseState });
+});
 
 module.exports = { HOST, PORT, app };
