@@ -8,6 +8,4 @@ function validateEmail(request, response, next) {
   next();
 }
 
-function generateJWT(request, response, next) {}
-
 module.exports = { validateEmail };
