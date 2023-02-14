@@ -63,6 +63,8 @@ connectDatabase(databaseURL)
             ${error}`);
   });
 
+app.use("/customers", require("./controllers/customers/CustomerRoutes"));
+
 // Test index route
 app.get("/", (request, response) => {
   response.json({ message: "Hello!" });
