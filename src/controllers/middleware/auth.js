@@ -20,6 +20,10 @@ function decryptString(data) {
   return decipher.update(data, "hex", "utf8") + decipher.final("utf8");
 }
 
+function decryptObject(data) {
+  return JSON.parse(decryptString(data));
+}
+
 function validateEmail(request, response, next) {
   if (!isEmail(request.body.email)) {
     return next(new Error("Invalid email address"));
