@@ -24,6 +24,21 @@ function decryptObject(data) {
   return JSON.parse(decryptString(data));
 }
 
+// Hashing configuration
+const bcrypt = require("bcrypt");
+const saltRounds = 10;
+
+async function hashString(string) {
+  const salt = await bcrypt.genSalt(saltRounds);
+  const hash = await bcrypt.hash(string, salt);
+
+  return hash;
+}
+
+async function validateHashedData(providedUnhashedData, storedHashedData) {
+  return await bcrypt.compare(providedUnhashedData, storedHashedData);
+}
+
 function validateEmail(request, response, next) {
   if (!isEmail(request.body.email)) {
     return next(new Error("Invalid email address"));
