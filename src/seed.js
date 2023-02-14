@@ -72,3 +72,39 @@ const merchants = [
     city: null,
   },
 ];
+
+const products = [
+  {
+    name: "Banana",
+    type: "Fruits",
+    price: 2.99,
+  },
+  {
+    name: "Apple",
+    type: "Fruits",
+    price: 1.99,
+  },
+  {
+    name: "Almond",
+    type: "Nuts",
+    price: 0.1,
+  },
+];
+
+const stockProducts = [
+  {
+    merchant: null,
+    product: null,
+    quantity: 23,
+  },
+  {
+    merchant: null,
+    product: null,
+    quantity: 2,
+  },
+  {
+    merchant: null,
+    product: null,
+    quantity: 0,
+  },
+];
