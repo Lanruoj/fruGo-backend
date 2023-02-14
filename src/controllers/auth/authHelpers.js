@@ -41,7 +41,13 @@ const jwt = require("jsonwebtoken");
 async function generateAccessToken(userID) {
   const encryptedUserData = encryptString(JSON.stringify(userID));
   const payload = { user: encryptedUserData };
-  return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "30m" });
+  return jwt.sign(payload, process.env.ACCESS_SECRET_KEY, { expiresIn: "30m" });
+}
+
+async function generateRefreshToken(userID) {
+  const encryptedUserData = encryptString(JSON.stringify(userID));
+  const payload = { user: encryptedUserData };
+  return jwt.sign(payload, process.env.REFRESH_SECRET_KEY);
 }
 
 function parseJWT(header) {
@@ -51,7 +57,7 @@ function parseJWT(header) {
 
 function verifyJWT(token) {
   const parsedJWT = parseJWT(token);
-  return jwt.verify(parsedJWT, process.env.JWT_SECRET_KEY, {
+  return jwt.verify(parsedJWT, process.env.ACCESS_SECRET_KEY, {
     complete: true,
   });
 }
