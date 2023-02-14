@@ -1,8 +1,8 @@
 const { isEmail } = require("validator");
 
-function validateEmail(error, request, response, next) {
+function validateEmail(request, response, next) {
   if (!isEmail(request.body.email)) {
-    return next(new Error(error));
+    return next(new Error("Invalid email address"));
   }
 
   next();
