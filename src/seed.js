@@ -90,32 +90,3 @@ const products = [
     price: 0.1,
   },
 ];
-
-const stockProducts = [
-  {
-    merchant: null,
-    product: null,
-    quantity: 23,
-  },
-  {
-    merchant: null,
-    product: null,
-    quantity: 2,
-  },
-  {
-    merchant: null,
-    product: null,
-    quantity: 0,
-  },
-];
-
-const orders = [
-  {
-    cart: null,
-    status: "pending",
-  },
-  {
-    cart: null,
-    status: "complete",
-  },
-];
