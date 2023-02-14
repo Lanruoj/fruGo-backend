@@ -1,5 +1,3 @@
-const { isEmail } = require("validator");
-
 // Encryption/decryption configuration
 const crypto = require("crypto");
 const encAlgorithm = "aes-256-cbc";
@@ -35,19 +33,16 @@ async function hashString(string) {
   return hash;
 }
 
+// JWT configuration
 function generateJWT(payload) {
   return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
 }
 
-// Generate JWT from encrypted User data with provided User details
 async function generateUserJWT(userDetails) {
-  // Encrypt the User payload
   let encryptedUserData = encryptString(JSON.stringify(userDetails));
-  // Must pass an object to create JWT otherwise expiresIn won't work
   return generateJWT({ data: encryptedUserData });
 }
 
-// Parse token from authorization header
 function parseJWT(header) {
   const jwt = header?.split(" ")[1].trim();
 
@@ -57,15 +52,3 @@ function parseJWT(header) {
 async function validateHashedData(providedUnhashedData, storedHashedData) {
   return await bcrypt.compare(providedUnhashedData, storedHashedData);
 }
-
-function validateEmail(request, response, next) {
-  if (!isEmail(request.body.email)) {
-    return next(new Error("Invalid email address"));
-  }
-
-  next();
-}
-
-function generateJWT(request, response, next) {}
-
-module.exports = { validateEmail };
