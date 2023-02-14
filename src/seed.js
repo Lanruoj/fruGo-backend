@@ -34,3 +34,11 @@ const customers = [
     streetAddress: "1234 Sally street",
   },
 ];
+
+const admin = {
+  email: "admin@email.com",
+  password: null,
+  username: "test_admin",
+  firstName: "Admin",
+  lastName: "Istrator",
+};
