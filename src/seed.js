@@ -108,3 +108,14 @@ const stockProducts = [
     quantity: 0,
   },
 ];
+
+const orders = [
+  {
+    cart: null,
+    status: "pending",
+  },
+  {
+    cart: null,
+    status: "complete",
+  },
+];
