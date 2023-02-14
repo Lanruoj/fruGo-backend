@@ -23,6 +23,7 @@ function decryptObject(data) {
 
 // Hashing configuration
 const bcrypt = require("bcrypt");
+const { parse } = require("path");
 const saltRounds = 10;
 
 async function hashString(string) {
@@ -36,6 +37,8 @@ async function validateHashedData(providedUnhashedData, storedHashedData) {
 }
 
 // JWT configuration
+const jwt = require("jsonwebtoken");
+
 function generateJWT(payload) {
   return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
 }
@@ -50,10 +53,18 @@ function parseJWT(header) {
   return jwt;
 }
 
+function verifyJWT(token) {
+  const parsedJWT = parseJWT(token);
+  return jwt.verify(parsedJWT, process.env.JWT_SECRET_KEY, {
+    complete: true,
+  });
+}
+
 module.exports = {
   hashString,
   validateHashedData,
   generateJWT,
   generateUserJWT,
   parseJWT,
+  verifyJWT,
 };
