@@ -44,12 +44,6 @@ async function generateAccessToken(userID) {
   return jwt.sign(payload, process.env.ACCESS_SECRET_KEY, { expiresIn: "30m" });
 }
 
-async function generateRefreshToken(userID) {
-  const encryptedUserData = encryptString(JSON.stringify(userID));
-  const payload = { user: encryptedUserData };
-  return jwt.sign(payload, process.env.REFRESH_SECRET_KEY);
-}
-
 function parseJWT(header) {
   const jwt = header?.split(" ")[1].trim();
   return jwt;
@@ -65,8 +59,7 @@ function verifyJWT(token) {
 module.exports = {
   hashString,
   validateHashedData,
-  generateJWT,
-  generateUserJWT,
+  generateAccessToken,
   parseJWT,
   verifyJWT,
 };
