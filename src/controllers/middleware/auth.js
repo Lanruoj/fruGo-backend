@@ -14,6 +14,12 @@ function encryptString(data) {
   return cipher.update(data, "utf8", "hex") + cipher.final("hex");
 }
 
+function decryptString(data) {
+  decipher = crypto.createDecipheriv(encAlgorithm, encPrivateKey, encIV);
+
+  return decipher.update(data, "hex", "utf8") + decipher.final("utf8");
+}
+
 function validateEmail(request, response, next) {
   if (!isEmail(request.body.email)) {
     return next(new Error("Invalid email address"));
