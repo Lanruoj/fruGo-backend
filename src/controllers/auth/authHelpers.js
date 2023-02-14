@@ -8,7 +8,6 @@ let decipher = crypto.createDecipheriv(encAlgorithm, encPrivateKey, encIV);
 
 function encryptString(data) {
   cipher = crypto.createCipheriv(encAlgorithm, encPrivateKey, encIV);
-
   return cipher.update(data, "utf8", "hex") + cipher.final("hex");
 }
 
@@ -29,8 +28,11 @@ const saltRounds = 10;
 async function hashString(string) {
   const salt = await bcrypt.genSalt(saltRounds);
   const hash = await bcrypt.hash(string, salt);
-
   return hash;
+}
+
+async function validateHashedData(providedUnhashedData, storedHashedData) {
+  return await bcrypt.compare(providedUnhashedData, storedHashedData);
 }
 
 // JWT configuration
@@ -45,10 +47,13 @@ async function generateUserJWT(userDetails) {
 
 function parseJWT(header) {
   const jwt = header?.split(" ")[1].trim();
-
   return jwt;
 }
 
-async function validateHashedData(providedUnhashedData, storedHashedData) {
-  return await bcrypt.compare(providedUnhashedData, storedHashedData);
-}
+module.exports = {
+  hashString,
+  validateHashedData,
+  generateJWT,
+  generateUserJWT,
+  parseJWT,
+};
