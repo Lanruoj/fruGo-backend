@@ -23,7 +23,6 @@ function decryptObject(data) {
 
 // Hashing configuration
 const bcrypt = require("bcrypt");
-const { parse } = require("path");
 const saltRounds = 10;
 
 async function hashString(string) {
@@ -39,13 +38,10 @@ async function validateHashedData(providedUnhashedData, storedHashedData) {
 // JWT configuration
 const jwt = require("jsonwebtoken");
 
-function generateJWT(payload) {
-  return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
-}
-
-async function generateUserJWT(userDetails) {
-  let encryptedUserData = encryptString(JSON.stringify(userDetails));
-  return generateJWT({ data: encryptedUserData });
+async function generateAccessToken(userID) {
+  const encryptedUserData = encryptString(JSON.stringify(userID));
+  const payload = { user: encryptedUserData };
+  return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "30m" });
 }
 
 function parseJWT(header) {
