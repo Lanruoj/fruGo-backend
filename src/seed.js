@@ -42,3 +42,33 @@ const admin = {
   firstName: "Admin",
   lastName: "Istrator",
 };
+
+const merchants = [
+  {
+    email: "melbourne_merchant@email.com",
+    password: null,
+    username: "melbourne_merchant",
+    name: "Melbourne Merchant",
+    description: "The best merchant in all of Melbourne",
+    streetAddress: "1234 Merchant street",
+    city: null,
+  },
+  {
+    email: "sydney_merchant@email.com",
+    password: null,
+    username: "sydney_merchant",
+    name: "Sydney Merchant",
+    description: "The best merchant in all of Sydney",
+    streetAddress: "1234 Merchant street",
+    city: null,
+  },
+  {
+    email: "brisbane_merchant@email.com",
+    password: null,
+    username: "brisbane_merchant",
+    name: "Brisbane Merchant",
+    description: "The best merchant in all of Brisbane",
+    streetAddress: "1234 Merchant street",
+    city: null,
+  },
+];
