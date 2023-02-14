@@ -35,6 +35,25 @@ async function hashString(string) {
   return hash;
 }
 
+function generateJWT(payload) {
+  return jwt.sign(payload, process.env.JWT_SECRET_KEY, { expiresIn: "7d" });
+}
+
+// Generate JWT from encrypted User data with provided User details
+async function generateUserJWT(userDetails) {
+  // Encrypt the User payload
+  let encryptedUserData = encryptString(JSON.stringify(userDetails));
+  // Must pass an object to create JWT otherwise expiresIn won't work
+  return generateJWT({ data: encryptedUserData });
+}
+
+// Parse token from authorization header
+function parseJWT(header) {
+  const jwt = header?.split(" ")[1].trim();
+
+  return jwt;
+}
+
 async function validateHashedData(providedUnhashedData, storedHashedData) {
   return await bcrypt.compare(providedUnhashedData, storedHashedData);
 }
