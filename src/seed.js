@@ -1,7 +1,6 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const { connectDatabase, disconnectDatabase } = require("./database");
-const { hashString } = require("./controllers/UserFunctions");
 const { City } = require("./models/City");
 
 const cities = [
@@ -90,3 +89,47 @@ const products = [
     price: 0.1,
   },
 ];
+
+// Configure database URL
+let databaseURL = "";
+switch (process.env.NODE_ENV.toLowerCase()) {
+  case "test":
+    databaseURL = process.env.TEST_DATABASE_URL;
+    break;
+  case "development":
+    databaseURL = process.env.DEV_DATABASE_URL;
+    break;
+  default:
+    console.error(
+      "Incorrect JavaScript environment specified, database will not be connected"
+    );
+    break;
+}
+
+connectDatabase(databaseURL)
+  .then(() => console.log("Database connected"))
+  .catch((error) => console.log("Error: Database could not be connected"))
+  .then(async () => {
+    if (process.env.WIPE == "true") {
+      const collections = await mongoose.connection.db
+        .listCollections()
+        .toArray();
+
+      collections
+        .map((collection) => collection.name)
+        .forEach(async (collectionName) => {
+          await mongoose.connection.db.dropCollection(collectionName);
+        });
+
+      console.log("Database wiped");
+    }
+  })
+  .then(async () => {
+    const createdCities = await City.insertMany(cities);
+    console.log("Cities seeded");
+  })
+  .then(async () => {
+    disconnectDatabase();
+
+    console.log("Database disconnected");
+  });
