@@ -1,8 +1,7 @@
 const request = require("supertest");
 const { app } = require("../src/server");
 
-// Test that [GET] / index page works
-describe("Server request", () => {
+describe("Test routes", () => {
   describe("'/' index route", () => {
     it("Returns successful status code", async () => {
       const response = await request(app).get("/");
