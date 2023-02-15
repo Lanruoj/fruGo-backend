@@ -17,7 +17,7 @@ const CartSchema = new mongoose.Schema({
       ref: "StockProduct",
     },
   ],
-  totalPrice: Number,
+  totalPrice: { type: Number, default: 0 },
 });
 
 const Cart = mongoose.model("Cart", CartSchema);
