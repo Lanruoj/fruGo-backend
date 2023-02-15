@@ -11,7 +11,7 @@ async function createCustomer(data) {
     streetAddress: data.streetAddress,
     city: data.city,
   };
-  return await Customer.create(data);
+  return await Customer.create(customerData);
 }
 
 module.exports = { createCustomer };
