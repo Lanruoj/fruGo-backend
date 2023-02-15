@@ -1,8 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { createCustomer } = require("./CustomerHelpers");
+const { validateEmail } = require("../auth/authMiddleware");
+const { generateAccessToken } = require("../auth/authHelpers");
 
-router.post("/register", async (request, response) => {
+router.post("/register", validateEmail, async (request, response) => {
   const newCustomer = await createCustomer({
     email: request.body.email,
     password: request.body.password,
@@ -13,7 +15,11 @@ router.post("/register", async (request, response) => {
     city: request.body.city,
   });
 
-  response.json({ customer: newCustomer });
+  const accessToken = await generateAccessToken({ customer: newCustomer._id });
+
+  response
+    .status(201)
+    .json({ customer: newCustomer, accessToken: accessToken });
 });
 
 module.exports = router;
