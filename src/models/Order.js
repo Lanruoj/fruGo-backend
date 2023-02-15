@@ -3,7 +3,7 @@ const mongoose = require("mongoose");
 const OrderSchema = new mongoose.Schema({
   cart: { type: mongoose.Schema.Types.ObjectId, ref: "Cart", required: true },
   timestamps: true,
-  status: String,
+  status: { type: String, default: "pending" },
 });
 
 const Order = mongoose.model("Order", OrderSchema);
