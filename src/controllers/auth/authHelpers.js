@@ -1,3 +1,5 @@
+const dotenv = require("dotenv").config();
+
 // Encryption/decryption configuration
 const crypto = require("crypto");
 const encAlgorithm = "aes-256-cbc";
