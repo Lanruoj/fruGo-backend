@@ -1,7 +1,9 @@
 const mongoose = require("mongoose");
 const dotenv = require("dotenv").config();
 const { connectDatabase, disconnectDatabase } = require("./database");
+const { hashString } = require("../src/controllers/auth/authHelpers");
 const { City } = require("./models/City");
+const { Customer } = require("./models/Customer");
 
 const cities = [
   { name: "Melbourne", state: "Victoria" },
@@ -126,7 +128,15 @@ connectDatabase(databaseURL)
   })
   .then(async () => {
     const createdCities = await City.insertMany(cities);
+    console.log(createdCities);
     console.log("Cities seeded");
+    // Hash each password & assign a city to each customer
+    for ([index, customer] of customers.entries()) {
+      customer.password = await hashString(process.env.USER_SEED_PASSWORD);
+      customer.city = createdCities[index];
+    }
+    const createdCustomers = await Customer.insertMany(customers);
+    console.log("Customers seeded");
   })
   .then(async () => {
     disconnectDatabase();
