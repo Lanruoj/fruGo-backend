@@ -4,7 +4,7 @@ const { createCustomer } = require("./CustomerHelpers");
 const { validateEmail } = require("../auth/authMiddleware");
 const { generateAccessToken } = require("../auth/authHelpers");
 
-router.post("/register", validateEmail, async (request, response) => {
+router.post("/register", validateEmail, async (request, response, next) => {
   let newCustomer;
   try {
     newCustomer = await createCustomer({
@@ -17,9 +17,9 @@ router.post("/register", validateEmail, async (request, response) => {
       city: request.body.city,
     });
   } catch (error) {
-    return response.status(400).json({ error: error.message });
+    return next(new Error(error.message));
   }
-  const accessToken = await generateAccessToken({ customer: newCustomer._id });
+  const accessToken = await generateAccessToken(newCustomer._id);
 
   response
     .status(201)
