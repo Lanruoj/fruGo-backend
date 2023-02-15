@@ -7,6 +7,7 @@ const { Customer } = require("./models/Customer");
 const { Admin } = require("./models/Admin");
 const { Merchant } = require("./models/Merchant");
 const { Product } = require("./models/Product");
+const { StockProduct } = require("./models/StockProduct");
 
 const cities = [
   { name: "Melbourne", state: "Victoria" },
@@ -95,6 +96,24 @@ const products = [
   },
 ];
 
+const stockProducts = [
+  {
+    merchant: null,
+    product: null,
+    quantity: 23,
+  },
+  {
+    merchant: null,
+    product: null,
+    quantity: 99,
+  },
+  {
+    merchant: null,
+    product: null,
+    quantity: 0,
+  },
+];
+
 connectDatabase(process.env.DEV_DATABASE_URL)
   .then(() => console.log("Database connected"))
   .catch((error) => console.log("Error: Database could not be connected"))
@@ -138,6 +157,12 @@ connectDatabase(process.env.DEV_DATABASE_URL)
     // Seed products
     const createdProducts = await Product.insertMany(products);
     console.log("Products seeded");
+    // Seed stock products
+    for ([index, stockProduct] of stockProducts.entries()) {
+      stockProduct.merchant = createdMerchants[index];
+      stockProduct.product = createdProducts[index];
+    }
+    const createdStockProducts = await StockProduct.insertMany(stockProducts);
   })
   .then(async () => {
     disconnectDatabase();
