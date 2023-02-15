@@ -76,4 +76,12 @@ app.get("/databaseTest", (request, response) => {
   response.json({ readyState: databaseState });
 });
 
+app.use("*", (error, request, response, next) => {
+  if (error) {
+    response.json({
+      error: error.message,
+    });
+  }
+});
+
 module.exports = { HOST, PORT, app };
