@@ -95,58 +95,52 @@ const products = [
   },
 ];
 
-function seedDatabase(url) {
-  connectDatabase(url)
-    .then(() => console.log("Database connected"))
-    .catch((error) => console.log("Error: Database could not be connected"))
-    .then(async () => {
-      if (process.env.WIPE == "true") {
-        const collections = await mongoose.connection.db
-          .listCollections()
-          .toArray();
+connectDatabase(process.env.DEV_DATABASE_URL)
+  .then(() => console.log("Database connected"))
+  .catch((error) => console.log("Error: Database could not be connected"))
+  .then(async () => {
+    if (process.env.WIPE == "true") {
+      const collections = await mongoose.connection.db
+        .listCollections()
+        .toArray();
 
-        collections
-          .map((collection) => collection.name)
-          .forEach(async (collectionName) => {
-            await mongoose.connection.db.dropCollection(collectionName);
-          });
+      collections
+        .map((collection) => collection.name)
+        .forEach(async (collectionName) => {
+          await mongoose.connection.db.dropCollection(collectionName);
+        });
 
-        console.log("Database wiped");
-      }
-    })
-    .then(async () => {
-      // Seed cities
-      const createdCities = await City.insertMany(cities);
-      console.log("Cities seeded");
-      // Hash each password & assign a city to each customer
-      for ([index, customer] of customers.entries()) {
-        customer.password = await hashString(process.env.USER_SEED_PASSWORD);
-        customer.city = createdCities[index];
-      }
-      const createdCustomers = await Customer.insertMany(customers);
-      console.log("Customers seeded");
-      // Seed admin
-      admin.password = await hashString(process.env.USER_SEED_PASSWORD);
-      const createdAdmin = await Admin.create(admin);
-      console.log("Admin seeded");
-      // Seed merchants
-      for ([index, merchant] of merchants.entries()) {
-        merchant.password = await hashString(process.env.USER_SEED_PASSWORD);
-        merchant.city = createdCities[index];
-      }
-      const createdMerchants = await Merchant.insertMany(merchants);
-      console.log("Merchants seeded");
-      // Seed products
-      const createdProducts = await Product.insertMany(products);
-      console.log("Products seeded");
-    })
-    .then(async () => {
-      disconnectDatabase();
+      console.log("Database wiped");
+    }
+  })
+  .then(async () => {
+    // Seed cities
+    const createdCities = await City.insertMany(cities);
+    console.log("Cities seeded");
+    // Hash each password & assign a city to each customer
+    for ([index, customer] of customers.entries()) {
+      customer.password = await hashString(process.env.USER_SEED_PASSWORD);
+      customer.city = createdCities[index];
+    }
+    const createdCustomers = await Customer.insertMany(customers);
+    console.log("Customers seeded");
+    // Seed admin
+    admin.password = await hashString(process.env.USER_SEED_PASSWORD);
+    const createdAdmin = await Admin.create(admin);
+    console.log("Admin seeded");
+    // Seed merchants
+    for ([index, merchant] of merchants.entries()) {
+      merchant.password = await hashString(process.env.USER_SEED_PASSWORD);
+      merchant.city = createdCities[index];
+    }
+    const createdMerchants = await Merchant.insertMany(merchants);
+    console.log("Merchants seeded");
+    // Seed products
+    const createdProducts = await Product.insertMany(products);
+    console.log("Products seeded");
+  })
+  .then(async () => {
+    disconnectDatabase();
 
-      console.log("Database disconnected");
-    });
-}
-
-seedDatabase(process.env.DEV_DATABASE_URL);
-
-module.exports = { seedDatabase };
+    console.log("Database disconnected");
+  });
