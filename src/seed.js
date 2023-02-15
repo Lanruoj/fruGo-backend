@@ -8,6 +8,8 @@ const { Admin } = require("./models/Admin");
 const { Merchant } = require("./models/Merchant");
 const { Product } = require("./models/Product");
 const { StockProduct } = require("./models/StockProduct");
+const { Cart } = require("./models/Cart");
+const { Order } = require("./models/Order");
 
 const cities = [
   { name: "Melbourne", state: "Victoria" },
@@ -37,6 +39,15 @@ const customers = [
     lastName: "Smith",
     city: null,
     streetAddress: "1234 Sally street",
+  },
+  {
+    email: "jane_doe@email.com",
+    password: null,
+    username: "jane_doe",
+    firstName: "Jane",
+    lastName: "Doe",
+    city: null,
+    streetAddress: "1234 Jane street",
   },
 ];
 
@@ -114,6 +125,38 @@ const stockProducts = [
   },
 ];
 
+const carts = [
+  {
+    customer: null,
+    merchant: null,
+    products: [],
+  },
+  {
+    customer: null,
+    merchant: null,
+    products: [],
+  },
+  {
+    customer: null,
+    merchant: null,
+    products: [],
+  },
+];
+
+const orders = [
+  {
+    cart: null,
+  },
+  {
+    cart: null,
+    status: "complete",
+  },
+  {
+    cart: null,
+    status: "cancelled",
+  },
+];
+
 connectDatabase(process.env.DEV_DATABASE_URL)
   .then(() => console.log("Database connected"))
   .catch((error) => console.log("Error: Database could not be connected"))
@@ -163,6 +206,21 @@ connectDatabase(process.env.DEV_DATABASE_URL)
       stockProduct.product = createdProducts[index];
     }
     const createdStockProducts = await StockProduct.insertMany(stockProducts);
+    console.log("StockProducts seeded");
+    // Seed carts
+    for ([index, cart] of carts.entries()) {
+      cart.customer = createdCustomers[index];
+      cart.merchant = createdMerchants[index];
+      cart.products = createdStockProducts;
+    }
+    const createdCarts = await Cart.insertMany(carts);
+    console.log("Carts seeded");
+    // Seed orders
+    for ([index, order] of orders.entries()) {
+      order.cart = createdCarts[index];
+    }
+    const createdOrders = await Order.insertMany(orders);
+    console.log("Orders seeded");
   })
   .then(async () => {
     disconnectDatabase();
