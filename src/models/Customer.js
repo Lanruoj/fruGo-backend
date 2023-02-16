@@ -19,7 +19,16 @@ const CustomerSchema = new mongoose.Schema({
       message: "Username may only contain alphanumeric characters",
     },
   },
-  firstName: { type: String, required: true },
+  firstName: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (username) => {
+        return validator.isAlpha(username, ["en-US"]);
+      },
+      message: "First name may only contain letters",
+    },
+  },
   lastName: { type: String, required: true },
   city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
   streetAddress: { type: String, required: true },
