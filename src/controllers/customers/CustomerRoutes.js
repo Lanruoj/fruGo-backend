@@ -1,10 +1,10 @@
 const express = require("express");
 const router = express.Router();
 const { createCustomer } = require("./CustomerHelpers");
-const { validateEmail } = require("../auth/authMiddleware");
+// const { validateEmail } = require("../auth/authMiddleware");
 const { generateAccessToken } = require("../auth/authHelpers");
 
-router.post("/register", validateEmail, async (request, response, next) => {
+router.post("/register", async (request, response, next) => {
   let newCustomer;
   try {
     newCustomer = await createCustomer({
