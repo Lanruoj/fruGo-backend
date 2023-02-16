@@ -78,7 +78,8 @@ app.get("/databaseTest", (request, response) => {
 
 app.use("*", (error, request, response, next) => {
   if (error) {
-    response.json({
+    response.status(error.status || 500).json({
+      status: error.status,
       error: error.message,
     });
   }
