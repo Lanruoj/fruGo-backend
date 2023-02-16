@@ -20,7 +20,16 @@ const MerchantSchema = new mongoose.Schema({
       message: "Username may only contain alphanumeric characters",
     },
   },
-  name: { type: String, required: true },
+  name: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (name) => {
+        return validator.isAlphanumeric(name, ["en-US"], { ignore: "_-" });
+      },
+      message: "Username may only contain alphanumeric characters",
+    },
+  },
   description: { type: String, required: true },
   streetAddress: { type: String, required: true },
   city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
