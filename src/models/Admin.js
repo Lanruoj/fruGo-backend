@@ -4,7 +4,7 @@ const uniqueValidator = require("mongoose-unique-validator");
 const { hashString } = require("../controllers/auth/authHelpers");
 
 const AdminSchema = new mongoose.Schema({
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   password: {
     type: String,
     required: true,
@@ -40,6 +40,14 @@ const AdminSchema = new mongoose.Schema({
       message: "Last name may only contain letters",
     },
   },
+});
+
+AdminSchema.plugin(uniqueValidator, {
+  message: "Email address must be unique",
+});
+
+AdminSchema.pre("save", async function () {
+  this.password = await hashString(this.password);
 });
 
 const Admin = mongoose.model("Admin", AdminSchema);
