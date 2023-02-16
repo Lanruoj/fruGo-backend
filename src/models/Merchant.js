@@ -5,7 +5,11 @@ const { hashString } = require("../controllers/auth/authHelpers");
 
 const MerchantSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
+  password: {
+    type: String,
+    required: true,
+    minLength: [6, "Password must be greater than 6 characters long"],
+  },
   username: { type: String, required: true },
   name: { type: String, required: true },
   description: { type: String, required: true },
