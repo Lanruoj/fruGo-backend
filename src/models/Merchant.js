@@ -10,7 +10,16 @@ const MerchantSchema = new mongoose.Schema({
     required: true,
     minLength: [6, "Password must be greater than 6 characters long"],
   },
-  username: { type: String, required: true },
+  username: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (username) => {
+        return validator.isAlphanumeric(username, ["en-US"], { ignore: "_-" });
+      },
+      message: "Username may only contain alphanumeric characters",
+    },
+  },
   name: { type: String, required: true },
   description: { type: String, required: true },
   streetAddress: { type: String, required: true },
