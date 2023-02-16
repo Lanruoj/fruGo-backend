@@ -1,7 +1,10 @@
 const mongoose = require("mongoose");
+const validator = require("validator");
+const uniqueValidator = require("mongoose-unique-validator");
+const { hashString } = require("../controllers/auth/authHelpers");
 
 const MerchantSchema = new mongoose.Schema({
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   password: { type: String, required: true },
   username: { type: String, required: true },
   name: { type: String, required: true },
@@ -15,6 +18,10 @@ const MerchantSchema = new mongoose.Schema({
     },
   ],
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+});
+
+MerchantSchema.plugin(uniqueValidator, {
+  message: "Email address must be unique",
 });
 
 const Merchant = mongoose.model("Merchant", MerchantSchema);
