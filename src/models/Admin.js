@@ -20,8 +20,26 @@ const AdminSchema = new mongoose.Schema({
       message: "Username may only contain alphanumeric characters",
     },
   },
-  firstName: { type: String, required: true },
-  lastName: { type: String, required: true },
+  firstName: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (firstName) => {
+        return validator.isAlpha(firstName, ["en-US"]);
+      },
+      message: "First name may only contain letters",
+    },
+  },
+  lastName: {
+    type: String,
+    required: true,
+    validate: {
+      validator: (lastName) => {
+        return validator.isAlpha(lastName, ["en-US"]);
+      },
+      message: "Last name may only contain letters",
+    },
+  },
 });
 
 const Admin = mongoose.model("Admin", AdminSchema);
