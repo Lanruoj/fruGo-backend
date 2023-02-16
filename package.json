@@ -6,7 +6,9 @@
   "scripts": {
     "test": "jest",
     "start-dev": "NODE_ENV=development nodemon src/index.js",
-    "seed-dev": "NODE_ENV=development WIPE=true nodemon src/seed.js"
+    "seed-dev": "NODE_ENV=development WIPE=true nodemon src/seed.js",
+    "test-seed": "NODE_ENV=test WIPE=true nodemon src/seed.js",
+    "test-dev": "NODE_ENV=test WIPE=true nodemon src/index.js"
   },
   "repository": {
     "type": "git",
