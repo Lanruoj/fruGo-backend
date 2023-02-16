@@ -17,7 +17,7 @@ router.post("/register", validateEmail, async (request, response, next) => {
       city: request.body.city,
     });
   } catch (error) {
-    error.status = 400;
+    error.status = 422;
     return next(error);
   }
   const accessToken = await generateAccessToken(newCustomer._id);
