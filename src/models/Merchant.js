@@ -35,7 +35,7 @@ const MerchantSchema = new mongoose.Schema({
     required: true,
     validate: {
       validator: (name) => {
-        return validator.isAlphanumeric(name, ["en-US"], { ignore: "_-" });
+        return validator.isAlphanumeric(name, ["en-US"], { ignore: " _-" });
       },
       message: "Username may only contain alphanumeric characters",
     },
