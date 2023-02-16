@@ -82,7 +82,7 @@ app.use("*", (error, request, response, next) => {
       status: error.status,
       error: {
         message: error._message,
-        description: error.message.split(": ").at(-1),
+        description: error.message.split(": ")[2],
       },
     });
   }
