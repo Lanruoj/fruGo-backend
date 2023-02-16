@@ -4,7 +4,17 @@ const uniqueValidator = require("mongoose-unique-validator");
 const { hashString } = require("../controllers/auth/authHelpers");
 
 const CustomerSchema = new mongoose.Schema({
-  email: { type: String, required: true, unique: true },
+  email: {
+    type: String,
+    required: true,
+    unique: true,
+    validate: {
+      validator: (email) => {
+        return validator.isEmail(email);
+      },
+      message: "Must be a valid email address",
+    },
+  },
   password: {
     type: String,
     required: true,
