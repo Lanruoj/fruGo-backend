@@ -23,8 +23,8 @@ const CustomerSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (username) => {
-        return validator.isAlpha(username, ["en-US"]);
+      validator: (firstName) => {
+        return validator.isAlpha(firstName, ["en-US"]);
       },
       message: "First name may only contain letters",
     },
@@ -33,14 +33,17 @@ const CustomerSchema = new mongoose.Schema({
     type: String,
     required: true,
     validate: {
-      validator: (username) => {
-        return validator.isAlpha(username, ["en-US"]);
+      validator: (lastName) => {
+        return validator.isAlpha(lastName, ["en-US"]);
       },
       message: "Last name may only contain letters",
     },
   },
   city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
-  streetAddress: { type: String, required: true },
+  streetAddress: {
+    type: String,
+    required: true,
+  },
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
 });
 
