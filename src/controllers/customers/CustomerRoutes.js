@@ -10,7 +10,7 @@ router.post("/register", validateEmail, async (request, response, next) => {
     newCustomer = await createCustomer({
       email: request.body.email,
       password: request.body.password,
-      username: request.body.password,
+      username: request.body.username,
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       streetAddress: request.body.streetAddress,
