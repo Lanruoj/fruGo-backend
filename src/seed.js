@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-const dotenv = require("dotenv").config();
+require("dotenv").config();
 const { connectDatabase, disconnectDatabase } = require("./database");
 const { hashString } = require("../src/controllers/auth/authHelpers");
 const { City } = require("./models/City");
@@ -157,7 +157,25 @@ const orders = [
   },
 ];
 
-connectDatabase(process.env.DEV_DATABASE_URL)
+let databaseURL = "";
+switch (process.env.NODE_ENV.toLowerCase()) {
+  case "test":
+    databaseURL = process.env.TEST_DATABASE_URL;
+    break;
+  case "development":
+    databaseURL = process.env.DEV_DATABASE_URL;
+    break;
+  case "production":
+    databaseURL = process.env.DATABASE_URL;
+    break;
+  default:
+    console.error(
+      "Incorrect JavaScript environment specified, database will not be connected"
+    );
+    break;
+}
+
+connectDatabase(databaseURL)
   .then(() => console.log("Database connected"))
   .catch((error) => console.log("Error: Database could not be connected"))
   .then(async () => {
