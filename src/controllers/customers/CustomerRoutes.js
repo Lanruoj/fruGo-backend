@@ -10,14 +10,14 @@ router.post("/register", validateEmail, async (request, response, next) => {
     newCustomer = await createCustomer({
       email: request.body.email,
       password: request.body.password,
-      username: request.body.password,
+      username: request.body.username,
       firstName: request.body.firstName,
       lastName: request.body.lastName,
       streetAddress: request.body.streetAddress,
       city: request.body.city,
     });
   } catch (error) {
-    error.status = 400;
+    error.status = 422;
     return next(error);
   }
   const accessToken = await generateAccessToken(newCustomer._id);
