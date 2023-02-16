@@ -1,15 +1,7 @@
-const { isEmail } = require("validator");
 const { verifyJWT } = require("./authHelpers");
 const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
 const { Admin } = require("../../models/Admin");
-
-function validateEmail(request, response, next) {
-  if (!isEmail(request.body.email)) {
-    return next(new Error("Invalid email address"));
-  }
-  next();
-}
 
 async function authenticateUser(request, response, next) {
   let verifiedJWT;
@@ -34,4 +26,4 @@ async function authenticateUser(request, response, next) {
   next();
 }
 
-module.exports = { validateEmail, authenticateUser };
+module.exports = { authenticateUser };
