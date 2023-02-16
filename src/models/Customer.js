@@ -1,9 +1,10 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
+const uniqueValidator = require("mongoose-unique-validator");
 const { hashString } = require("../controllers/auth/authHelpers");
 
 const CustomerSchema = new mongoose.Schema({
-  email: { type: String, required: true },
+  email: { type: String, required: true, unique: true },
   password: {
     type: String,
     required: true,
@@ -45,6 +46,11 @@ const CustomerSchema = new mongoose.Schema({
     required: true,
   },
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+});
+
+// Handle 'unique: true' error
+CustomerSchema.plugin(uniqueValidator, {
+  message: "Email address must be unique",
 });
 
 CustomerSchema.pre("save", async function () {
