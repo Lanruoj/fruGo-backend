@@ -2,6 +2,7 @@ const express = require("express");
 const router = express.Router();
 const { createCustomer, getAllCustomers } = require("./CustomerHelpers");
 const { generateAccessToken } = require("../auth/authHelpers");
+const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
@@ -27,12 +28,17 @@ router.post("/register", async (request, response, next) => {
 });
 
 // Get all customers (admin only)
-router.get("/", async (request, response, next) => {
-  const customers = await getAllCustomers();
-  response.status(200).json({
-    customers: customers,
-    accessToken: request.headers["authorization"],
-  });
-});
+router.get(
+  "/",
+  authenticateUser,
+  allowAdminOnly,
+  async (request, response, next) => {
+    const customers = await getAllCustomers();
+    response.status(200).json({
+      customers: customers,
+      accessToken: request.headers["authorization"],
+    });
+  }
+);
 
 module.exports = router;
