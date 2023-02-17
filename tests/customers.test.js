@@ -1,8 +1,15 @@
 const request = require("supertest");
+const mongoose = require("mongoose");
 const { app } = require("../src/server");
 const { City } = require("../src/models/City");
+const { seedDatabase } = require("../src/seed");
 
 describe("Customer routes", () => {
+  beforeAll(async () => {
+    await seedDatabase();
+    await mongoose.connect(process.env.TEST_DATABASE_URL);
+  });
+
   describe("[POST] /register - register a new customer", () => {
     it("Registers a new customer", async () => {
       const city = await City.findOne({}).exec();
@@ -22,8 +29,7 @@ describe("Customer routes", () => {
       expect(response.body.accessToken).toBeTruthy();
     });
   });
-});
-
-afterAll((done) => {
-  done();
+  afterAll(async () => {
+    await mongoose.connection.close();
+  });
 });
