@@ -4,7 +4,7 @@
   "description": "...",
   "main": "index.js",
   "scripts": {
-    "test": "jest --detectOpenHandles",
+    "test": "jest --detectOpenHandles --verbose",
     "dev": "NODE_ENV=development nodemon src/index.js",
     "seed": "NODE_ENV=development SEED=true node src/seed.js"
   },
