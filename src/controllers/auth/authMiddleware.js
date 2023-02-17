@@ -19,12 +19,16 @@ async function authenticateUser(request, response, next) {
   const foundAdmin = await Admin.findById(userID).exec();
   const userDocument = foundCustomer || foundMerchant || foundAdmin;
   request.user = userDocument._id;
-  request.role = userDocument.modelName;
+  request.role =
+    (foundCustomer && "customer") ||
+    (foundMerchant && "merchant") ||
+    (foundAdmin && "admin") ||
+    null;
   next();
 }
 
 async function allowAdminOnly(request, response, next) {
-  if (request.role !== "Admin") {
+  if (request.role !== "admin") {
     const notAdmin = new Error("Must be an adminstrator to perform this task");
     notAdmin.status = 401;
     return next(notAdmin);
