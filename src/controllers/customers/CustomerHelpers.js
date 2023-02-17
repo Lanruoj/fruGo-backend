@@ -13,4 +13,9 @@ async function createCustomer(data) {
   return await Customer.create(customerData);
 }
 
-module.exports = { createCustomer };
+async function getAllCustomers() {
+  const customers = await Customer.find({}).exec();
+  return customers;
+}
+
+module.exports = { createCustomer, getAllCustomers };
