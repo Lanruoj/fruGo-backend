@@ -4,11 +4,9 @@
   "description": "...",
   "main": "index.js",
   "scripts": {
-    "test": "jest",
-    "start-dev": "NODE_ENV=development nodemon src/index.js",
-    "seed-dev": "NODE_ENV=development WIPE=true nodemon src/seed.js",
-    "seed-test": "NODE_ENV=test WIPE=true nodemon src/seed.js",
-    "start-test": "NODE_ENV=test WIPE=true nodemon src/index.js"
+    "test": "jest --detectOpenHandles",
+    "dev": "NODE_ENV=development nodemon src/index.js",
+    "seed": "NODE_ENV=development SEED=true node src/seed.js"
   },
   "repository": {
     "type": "git",

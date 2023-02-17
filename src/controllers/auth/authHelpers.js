@@ -15,7 +15,6 @@ function encryptString(data) {
 
 function decryptString(data) {
   decipher = crypto.createDecipheriv(encAlgorithm, encPrivateKey, encIV);
-
   return decipher.update(data, "hex", "utf8") + decipher.final("utf8");
 }
 
@@ -47,7 +46,7 @@ async function generateAccessToken(userID) {
 }
 
 function parseJWT(header) {
-  const jwt = header?.split(" ")[1].trim();
+  const jwt = header?.split(" ")[1]?.trim();
   return jwt;
 }
 
@@ -60,6 +59,7 @@ function verifyJWT(token) {
 
 module.exports = {
   hashString,
+  decryptString,
   validateHashedData,
   generateAccessToken,
   parseJWT,

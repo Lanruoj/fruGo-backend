@@ -1,4 +1,4 @@
-const { verifyJWT } = require("./authHelpers");
+const { verifyJWT, decryptString } = require("./authHelpers");
 const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
 const { Admin } = require("../../models/Admin");
@@ -6,24 +6,35 @@ const { Admin } = require("../../models/Admin");
 async function authenticateUser(request, response, next) {
   let verifiedJWT;
   try {
-    verifiedJWT = verifyJWT(request.body["authorization"]);
-    next();
+    verifiedJWT = verifyJWT(request.headers.authorization);
   } catch (error) {
-    return next(new Error("Invalid access token"));
+    error.status = 401;
+    return next(error);
   }
-  const decryptedUser = decryptString(verifiedJWT.payload.user);
-  const userString = JSON.parse(decryptedUser);
-  const userDocument =
-    (await Customer.findById(user).exec()) ||
-    (await Merchant.findById(user).exec()) ||
-    (await Admin.findById(user).exec());
-  if (
-    !userDocument.email == userString.email ||
-    !userDocument.password == userDocument.password
-  ) {
-    return next(new Error("Authentication failed"));
-  }
+  const decryptedData = decryptString(verifiedJWT.payload.user);
+  const userID = JSON.parse(decryptedData);
+  // Find user subtype
+  const foundCustomer = await Customer.findById(userID).exec();
+  const foundMerchant = await Merchant.findById(userID).exec();
+  const foundAdmin = await Admin.findById(userID).exec();
+  const userDocument = foundCustomer || foundMerchant || foundAdmin;
+  request.user = userDocument._id;
+  request.role =
+    (foundCustomer && "customer") ||
+    (foundMerchant && "merchant") ||
+    (foundAdmin && "admin") ||
+    null;
   next();
 }
 
-module.exports = { authenticateUser };
+async function allowAdminOnly(request, response, next) {
+  if (request.role !== "admin") {
+    const notAdmin = new Error("Must be an adminstrator to perform this task");
+    notAdmin.status = 401;
+    return next(notAdmin);
+  }
+
+  next();
+}
+
+module.exports = { authenticateUser, allowAdminOnly };

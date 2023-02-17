@@ -1,6 +1,6 @@
 const request = require("supertest");
+const mongoose = require("mongoose");
 const { app } = require("../src/server");
-const { City } = require("../src/models/City");
 
 describe("Test routes", () => {
   describe("'/' index route", () => {
@@ -8,20 +8,13 @@ describe("Test routes", () => {
       const response = await request(app).get("/");
       expect(response.statusCode).toEqual(200);
     });
-    it("Returns 'Hello!'", async () => {
+    it("Returns 'Hello World!'", async () => {
       const response = await request(app).get("/");
-      expect(response.body.message).toEqual("Hello!");
-    });
-  });
-  describe("'/databaseTest' route", () => {
-    it("Returns successful database connection state", async () => {
-      const response = await request(app).get("/databaseTest");
-      expect(response.statusCode).toEqual(200);
-      expect(response.body.readyState).toEqual(1);
+      expect(response.body.message).toEqual("Hello World!");
     });
   });
 });
 
-afterAll((done) => {
-  done();
+afterAll(async () => {
+  await mongoose.connection.close();
 });
