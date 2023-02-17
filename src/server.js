@@ -52,7 +52,6 @@ switch (process.env.NODE_ENV.toLowerCase()) {
 }
 
 // Connect to database
-const mongoose = require("mongoose");
 const { connectDatabase } = require("./database");
 connectDatabase(databaseURL)
   .then(() => {
@@ -65,15 +64,11 @@ connectDatabase(databaseURL)
 
 app.use("/customers", require("./controllers/customers/CustomerRoutes"));
 
-// Test index route
 app.get("/", (request, response) => {
-  response.json({ message: "Hello!" });
-});
-
-// Test database connection
-app.get("/databaseTest", (request, response) => {
-  const databaseState = mongoose.connection.readyState;
-  response.json({ readyState: databaseState });
+  response.status(200).json({
+    status: 200,
+    message: "Hello World!",
+  });
 });
 
 app.use("*", (error, request, response, next) => {
