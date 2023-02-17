@@ -1,9 +1,9 @@
 const express = require("express");
 const router = express.Router();
-const { createCustomer } = require("./CustomerHelpers");
-// const { validateEmail } = require("../auth/authMiddleware");
+const { createCustomer, getAllCustomers } = require("./CustomerHelpers");
 const { generateAccessToken } = require("../auth/authHelpers");
 
+// Register a new customer
 router.post("/register", async (request, response, next) => {
   let newCustomer;
   try {
@@ -21,10 +21,18 @@ router.post("/register", async (request, response, next) => {
     return next(error);
   }
   const accessToken = await generateAccessToken(newCustomer._id);
-
   response
     .status(201)
     .json({ customer: newCustomer, accessToken: accessToken });
+});
+
+// Get all customers (admin only)
+router.get("/", async (request, response, next) => {
+  const customers = await getAllCustomers();
+  response.status(200).json({
+    customers: customers,
+    accessToken: request.headers["authorization"],
+  });
 });
 
 module.exports = router;
