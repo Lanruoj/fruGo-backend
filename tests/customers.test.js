@@ -4,6 +4,7 @@ const mongoose = require("mongoose");
 const { app } = require("../src/server");
 const { City } = require("../src/models/City");
 const { Admin } = require("../src/models/Admin");
+const { Customer } = require("../src/models/Customer");
 const { seedDatabase } = require("../src/seed");
 const { generateAccessToken } = require("../src/controllers/auth/authHelpers");
 
@@ -34,17 +35,24 @@ describe("Customer routes", () => {
   });
 
   describe("[GET] / - get all customers", () => {
-    let accessToken = "";
+    let accessToken;
     let response;
+    let dbCount;
     beforeAll(async () => {
       const admin = await Admin.findOne({ username: "test_admin" }).exec();
+      const customers = await Customer.find({}).exec();
+      dbCount = customers.length;
       accessToken = await generateAccessToken(admin._id);
       response = await request(app)
         .get("/customers/")
         .set("Authorization", `Bearer ${accessToken}`);
     });
-    it("Gets all customers", async () => {
+    it("Gets returns 200 status code", async () => {
       expect(response.statusCode).toEqual(200);
+    });
+    it("Gets all customers", async () => {
+      const jsonCount = response.body.customers.length;
+      expect(jsonCount).toEqual(dbCount);
     });
   });
   afterAll(async () => {
