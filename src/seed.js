@@ -1,6 +1,6 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
-const { connectDatabase, disconnectDatabase } = require("./database");
+const { connectDatabase } = require("./database");
 const { hashString } = require("../src/controllers/auth/authHelpers");
 const { City } = require("./models/City");
 const { Customer } = require("./models/Customer");
@@ -219,7 +219,9 @@ async function seedDatabase() {
 
       console.log("Database seeded & disconnected");
     })
-    .catch((error) => console.log("Error: Database could not be seeded"));
+    .catch(() => console.log("Error: Database could not be seeded"));
 }
+
+if (process.env.SEED == "true") seedDatabase();
 
 module.exports = { seedDatabase };
