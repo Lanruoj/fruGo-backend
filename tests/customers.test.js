@@ -35,24 +35,30 @@ describe("Customer routes", () => {
   });
 
   describe("[GET] / - get all customers", () => {
-    let accessToken;
-    let response;
     let dbCount;
+    let adminToken;
+    let customerToken;
     beforeAll(async () => {
-      const admin = await Admin.findOne({ username: "test_admin" }).exec();
       const customers = await Customer.find({}).exec();
       dbCount = customers.length;
-      accessToken = await generateAccessToken(admin._id);
-      response = await request(app)
+      const customer = await Customer.findOne({}).exec();
+      customerToken = await generateAccessToken(customer._id);
+      const admin = await Admin.findOne({ username: "test_admin" }).exec();
+      adminToken = await generateAccessToken(admin._id);
+    });
+    it("Admin token returns all customers", async () => {
+      const response = await request(app)
         .get("/customers/")
-        .set("Authorization", `Bearer ${accessToken}`);
-    });
-    it("Gets returns 200 status code", async () => {
+        .set("Authorization", `Bearer ${adminToken}`);
       expect(response.statusCode).toEqual(200);
-    });
-    it("Gets all customers", async () => {
       const jsonCount = response.body.customers.length;
       expect(jsonCount).toEqual(dbCount);
+    });
+    it("Customer token denies access", async () => {
+      const response = await request(app)
+        .get("/customers/")
+        .set("Authorization", `Bearer ${customerToken}`);
+      expect(response.statusCode).toEqual(401);
     });
   });
   afterAll(async () => {
