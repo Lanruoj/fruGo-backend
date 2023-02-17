@@ -1,4 +1,4 @@
-const { verifyJWT } = require("./authHelpers");
+const { verifyJWT, decryptString } = require("./authHelpers");
 const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
 const { Admin } = require("../../models/Admin");
@@ -6,32 +6,31 @@ const { Admin } = require("../../models/Admin");
 async function authenticateUser(request, response, next) {
   let verifiedJWT;
   try {
-    verifiedJWT = verifyJWT(request.headers["authorization"]);
+    verifiedJWT = verifyJWT(request.headers.authorization);
   } catch (error) {
-    return next(new Error("Invalid access token"));
-  }
-  const decryptedUser = decryptString(verifiedJWT.payload.user);
-  const userObject = JSON.parse(decryptedUser);
-  // Find user subtype
-  const foundCustomer = await Customer.findById(userObject._id).exec();
-  const foundMerchant = await Merchant.findById(userObject._id).exec();
-  const foundAdmin = await Admin.findById(userObject._id).exec();
-  const userDocument = foundCustomer || foundMerchant || foundAdmin;
-  if (
-    !userDocument.email == userObject.email ||
-    !userDocument.password == userObject.password
-  ) {
-    const error = new Error("Authentication failed");
     error.status = 401;
     return next(error);
   }
+  const decryptedData = decryptString(verifiedJWT.payload.user);
+  const userID = JSON.parse(decryptedData);
+  // Find user subtype
+  const foundCustomer = await Customer.findById(userID).exec();
+  const foundMerchant = await Merchant.findById(userID).exec();
+  const foundAdmin = await Admin.findById(userID).exec();
+  const userDocument = foundCustomer || foundMerchant || foundAdmin;
   request.user = userDocument._id;
   request.role = userDocument.modelName;
   next();
 }
 
-// async function allowAdminOnly(request, response, next) {
-//   request.headers["authorization"];
-// }
+async function allowAdminOnly(request, response, next) {
+  if (request.role !== "Admin") {
+    const notAdmin = new Error("Must be an adminstrator to perform this task");
+    notAdmin.status = 401;
+    return next(notAdmin);
+  }
 
-module.exports = { authenticateUser };
+  next();
+}
+
+module.exports = { authenticateUser, allowAdminOnly };
