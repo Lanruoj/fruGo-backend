@@ -40,7 +40,7 @@ async function validateHashedData(providedUnhashedData, storedHashedData) {
 const jwt = require("jsonwebtoken");
 
 async function generateAccessToken(userID) {
-  const encryptedUserData = encryptString(userID);
+  const encryptedUserData = encryptString(JSON.stringify(userID));
   const payload = { user: encryptedUserData };
   return jwt.sign(payload, process.env.ACCESS_SECRET_KEY, { expiresIn: "30m" });
 }
