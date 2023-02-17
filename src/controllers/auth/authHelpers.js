@@ -15,7 +15,6 @@ function encryptString(data) {
 
 function decryptString(data) {
   decipher = crypto.createDecipheriv(encAlgorithm, encPrivateKey, encIV);
-
   return decipher.update(data, "hex", "utf8") + decipher.final("utf8");
 }
 
@@ -41,13 +40,13 @@ async function validateHashedData(providedUnhashedData, storedHashedData) {
 const jwt = require("jsonwebtoken");
 
 async function generateAccessToken(userID) {
-  const encryptedUserData = encryptString(JSON.stringify(userID));
+  const encryptedUserData = encryptString(userID);
   const payload = { user: encryptedUserData };
   return jwt.sign(payload, process.env.ACCESS_SECRET_KEY, { expiresIn: "30m" });
 }
 
 function parseJWT(header) {
-  const jwt = header?.split(" ")[1].trim();
+  const jwt = header?.split(" ")[1]?.trim();
   return jwt;
 }
 
@@ -60,6 +59,7 @@ function verifyJWT(token) {
 
 module.exports = {
   hashString,
+  decryptString,
   validateHashedData,
   generateAccessToken,
   parseJWT,
