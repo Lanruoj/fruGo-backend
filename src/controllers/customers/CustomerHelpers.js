@@ -1,4 +1,5 @@
 const { Customer } = require("../../models/Customer");
+const { generateAccessToken } = require("../auth/authHelpers");
 
 async function createCustomer(data) {
   const customerData = {
@@ -18,4 +19,9 @@ async function getAllCustomers() {
   return customers;
 }
 
-module.exports = { createCustomer, getAllCustomers };
+async function loginCustomer(userID) {
+  const token = await generateAccessToken(userID);
+  return token;
+}
+
+module.exports = { createCustomer, getAllCustomers, loginCustomer };
