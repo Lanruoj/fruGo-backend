@@ -1,4 +1,4 @@
-const { verifyJWT, decryptString } = require("./authHelpers");
+const { verifyJWT, decryptString, parseJWT } = require("./authHelpers");
 const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
 const { Admin } = require("../../models/Admin");
@@ -24,16 +24,17 @@ async function authenticateUser(request, response, next) {
     (foundMerchant && "merchant") ||
     (foundAdmin && "admin") ||
     null;
+  request.accessToken = parseJWT(request.headers.authorization);
   next();
 }
 
 async function allowAdminOnly(request, response, next) {
   if (request.role !== "admin") {
-    const notAdmin = new Error("Must be an adminstrator to perform this task");
+    const notAdmin = new Error();
+    notAdmin.message = ": : Must be an administrator to perform this task";
     notAdmin.status = 401;
     return next(notAdmin);
   }
-
   next();
 }
 
