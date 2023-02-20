@@ -6,7 +6,11 @@ const {
   getCustomerByID,
 } = require("./CustomerHelpers");
 const { generateAccessToken } = require("../auth/authHelpers");
-const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
+const {
+  authenticateUser,
+  allowAdminOnly,
+  allowOwnerOrAdmin,
+} = require("../auth/authMiddleware");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
@@ -47,13 +51,13 @@ router.get(
 
 // Get customer profile by ID
 router.get(
-  "/profile/:customerID",
+  "/profile/:id",
   authenticateUser,
-  allowAdminOnly,
+  allowOwnerOrAdmin,
   async (request, response, next) => {
-    const customer = await getCustomerByID(request.params.customerID);
+    const customer = await getCustomerByID(request.params.id);
     response.status(200).json({
-      customer: customer,
+      profile: customer,
       accessToken: request.accessToken,
     });
   }
