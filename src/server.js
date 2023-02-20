@@ -77,8 +77,7 @@ app.use("*", (error, request, response, next) => {
     response.status(error.status || 500).json({
       status: error.status,
       error: {
-        message: error._message,
-        description: error.message.split(": ")[2],
+        message: error.message.split(": ")[2],
       },
     });
   }
