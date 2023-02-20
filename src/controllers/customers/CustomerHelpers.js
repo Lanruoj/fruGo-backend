@@ -18,4 +18,14 @@ async function getAllCustomers() {
   return customers;
 }
 
-module.exports = { createCustomer, getAllCustomers };
+async function getCustomerByID(customerID) {
+  let customer;
+  try {
+    customer = await Customer.findById(customerID).exec();
+  } catch (error) {
+    throw new Error(error);
+  }
+  return customer;
+}
+
+module.exports = { createCustomer, getAllCustomers, getCustomerByID };

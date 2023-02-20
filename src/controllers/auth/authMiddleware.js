@@ -1,4 +1,4 @@
-const { verifyJWT, decryptString } = require("./authHelpers");
+const { verifyJWT, decryptString, parseJWT } = require("./authHelpers");
 const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
 const { Admin } = require("../../models/Admin");
@@ -18,22 +18,33 @@ async function authenticateUser(request, response, next) {
   const foundMerchant = await Merchant.findById(userID).exec();
   const foundAdmin = await Admin.findById(userID).exec();
   const userDocument = foundCustomer || foundMerchant || foundAdmin;
-  request.user = userDocument._id;
+  request.user = userDocument.id;
   request.role =
     (foundCustomer && "customer") ||
     (foundMerchant && "merchant") ||
     (foundAdmin && "admin") ||
     null;
+  request.accessToken = parseJWT(request.headers.authorization);
   next();
 }
 
 async function allowAdminOnly(request, response, next) {
   if (request.role !== "admin") {
-    const notAdmin = new Error("Must be an adminstrator to perform this task");
+    const notAdmin = new Error();
+    notAdmin.message = ": : Must be an administrator to perform this task";
     notAdmin.status = 401;
     return next(notAdmin);
   }
+  next();
+}
 
+async function allowOwnerOrAdmin(request, response, next) {
+  if (request.user != request.params.id && request.role !== "admin") {
+    const error = new Error();
+    error.message = ": : Unauthorised";
+    error.status = 401;
+    return next(error);
+  }
   next();
 }
 
@@ -61,4 +72,9 @@ async function validateLoginDetails(request, response, next) {
   next();
 }
 
-module.exports = { authenticateUser, allowAdminOnly, validateLoginDetails };
+module.exports = {
+  authenticateUser,
+  allowAdminOnly,
+  validateLoginDetails,
+  allowOwnerOrAdmin,
+};
