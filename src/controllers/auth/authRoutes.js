@@ -7,6 +7,7 @@ router.post("/login", validateLoginDetails, async (request, response, next) => {
   const accessToken = await loginUser(request.user);
   response.status(200).json({
     status: 200,
+    user: request.user,
     accessToken: accessToken,
   });
 });
