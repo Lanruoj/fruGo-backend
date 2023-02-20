@@ -1,13 +1,8 @@
 const express = require("express");
 const router = express.Router();
-const {
-  createCustomer,
-  getAllCustomers,
-  loginCustomer,
-} = require("./CustomerHelpers");
+const { createCustomer, getAllCustomers } = require("./CustomerHelpers");
 const { generateAccessToken } = require("../auth/authHelpers");
 const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
-const { validateCustomerLogin } = require("./CustomerMiddleware");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
@@ -42,18 +37,6 @@ router.get(
     response.status(200).json({
       customers: customers,
       accessToken: request.headers["authorization"],
-    });
-  }
-);
-
-router.post(
-  "/login",
-  validateCustomerLogin,
-  async (request, response, next) => {
-    const accessToken = await loginCustomer(request.userID);
-    response.status(200).json({
-      status: 200,
-      accessToken: accessToken,
     });
   }
 );

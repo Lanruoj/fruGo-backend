@@ -57,6 +57,11 @@ function verifyJWT(token) {
   });
 }
 
+async function loginUser(userID) {
+  const token = await generateAccessToken(userID);
+  return token;
+}
+
 module.exports = {
   hashString,
   decryptString,
@@ -64,4 +69,5 @@ module.exports = {
   generateAccessToken,
   parseJWT,
   verifyJWT,
+  loginUser,
 };
