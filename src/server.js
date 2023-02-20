@@ -63,6 +63,7 @@ connectDatabase(databaseURL)
   });
 
 app.use("/customers", require("./controllers/customers/CustomerRoutes"));
+app.use("/auth", require("./controllers/auth/authRoutes"));
 
 app.get("/", (request, response) => {
   response.status(200).json({
