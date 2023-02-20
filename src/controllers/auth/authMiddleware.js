@@ -37,4 +37,28 @@ async function allowAdminOnly(request, response, next) {
   next();
 }
 
-module.exports = { authenticateUser, allowAdminOnly };
+async function validateLoginDetails(request, response, next) {
+  const foundCustomer = await Customer.findOne({
+    email: request.body.email,
+  }).exec();
+  const foundMerchant = await Merchant.findOne({
+    email: request.body.email,
+  }).exec();
+  const foundAdmin = await Admin.findOne({
+    email: request.body.email,
+  }).exec();
+  const foundUser = foundCustomer || foundMerchant || foundAdmin;
+  if (!foundUser) throw new Error("Email is incorrect");
+  if (!foundUser.password == request.body.password) {
+    throw new Error("Password is incorrect");
+  }
+  request.user = foundUser._id;
+  request.role =
+    (foundCustomer && "customer") ||
+    (foundMerchant && "merchant") ||
+    (foundAdmin && "admin") ||
+    null;
+  next();
+}
+
+module.exports = { authenticateUser, allowAdminOnly, validateLoginDetails };
