@@ -49,7 +49,7 @@ router.get(
   }
 );
 
-// Get customer profile by ID
+// Get customer profile by ID (own profile or admin only)
 router.get(
   "/profile/:id",
   authenticateUser,
