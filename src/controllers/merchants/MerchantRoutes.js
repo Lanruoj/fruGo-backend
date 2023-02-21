@@ -3,7 +3,12 @@ const router = express.Router();
 const { filterCollection } = require("../helpers");
 
 router.get("/", async (request, response, next) => {
-  const results = await filterCollection("Merchant", request.query);
+  let results;
+  try {
+    results = await filterCollection("Merchant", request.query);
+  } catch (err) {
+    return next(err);
+  }
   response.status(200).json({
     status: 200,
     results: results,
