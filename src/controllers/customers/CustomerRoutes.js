@@ -45,14 +45,18 @@ router.get(
   allowAdminOnly,
   async (request, response, next) => {
     let customers;
-    if (!Object.keys(request.query).length) {
-      customers = await getAllCustomers();
-    } else {
-      customers = await filterCustomers(request.query);
+    try {
+      if (!Object.keys(request.query).length) {
+        customers = await getAllCustomers();
+      } else {
+        customers = await filterCustomers(request.query);
+      }
+    } catch (err) {
+      return next(err);
     }
     response.status(200).json({
       status: 200,
-      customers: customers,
+      customers: customers.flat(),
       accessToken: request.accessToken,
     });
   }
