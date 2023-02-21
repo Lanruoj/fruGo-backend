@@ -4,6 +4,7 @@ const {
   createCustomer,
   getAllCustomers,
   getCustomerByID,
+  updateCustomer,
 } = require("./CustomerHelpers");
 const { generateAccessToken } = require("../auth/authHelpers");
 const {
@@ -44,7 +45,7 @@ router.get(
     const customers = await getAllCustomers();
     response.status(200).json({
       customers: customers,
-      accessToken: request.headers["authorization"],
+      accessToken: request.accessToken,
     });
   }
 );
@@ -58,6 +59,30 @@ router.get(
     const customer = await getCustomerByID(request.params.id);
     response.status(200).json({
       profile: customer,
+      accessToken: request.accessToken,
+    });
+  }
+);
+
+// Update customer (own profile or admin only)
+router.put(
+  "/profile/:id",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    let result = {};
+    try {
+      result = await updateCustomer({
+        id: request.params.id,
+        data: request.body,
+      });
+    } catch (error) {
+      error.status = 400;
+      return next(error);
+    }
+    response.status(200).json({
+      status: 200,
+      updates: result.updatedFields,
       accessToken: request.accessToken,
     });
   }

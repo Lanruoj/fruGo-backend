@@ -1,4 +1,5 @@
 const { Customer } = require("../../models/Customer");
+const { omit } = require("underscore");
 
 async function createCustomer(data) {
   const customerData = {
@@ -28,4 +29,35 @@ async function getCustomerByID(customerID) {
   return customer;
 }
 
-module.exports = { createCustomer, getAllCustomers, getCustomerByID };
+async function updateCustomer(updateData) {
+  const { id, data } = updateData;
+  let originalCustomer;
+  try {
+    originalCustomer = await Customer.findByIdAndUpdate(id, data, {
+      returnDocument: "before",
+    })
+      .lean()
+      .exec();
+  } catch (err) {
+    throw { message: ": : Customer could not be found", status: 400 };
+  }
+  const updatedCustomer = await Customer.findById(id).lean().exec();
+  const updatedFields = omit(updatedCustomer, (value, field) => {
+    return originalCustomer[field]?.toString() === value?.toString();
+  });
+  // MAY NOT NEED... /////////////////////////////////////////////
+  if (!Object.keys(updatedFields).length) {
+    throw { message: ": : No updates specified", status: 400 };
+  }
+  return {
+    updatedCustomer: updatedCustomer,
+    updatedFields: updatedFields,
+  };
+}
+
+module.exports = {
+  createCustomer,
+  getAllCustomers,
+  getCustomerByID,
+  updateCustomer,
+};
