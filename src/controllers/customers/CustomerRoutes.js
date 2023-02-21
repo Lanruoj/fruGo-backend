@@ -14,6 +14,7 @@ const {
   allowAdminOnly,
   allowOwnerOrAdmin,
 } = require("../auth/authMiddleware");
+const { filterCollection } = require("../helpers");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
@@ -49,7 +50,7 @@ router.get(
       if (!Object.keys(request.query).length) {
         customers = await getAllCustomers();
       } else {
-        customers = await filterCustomers(request.query);
+        customers = await filterCollection("Customer", request.query);
       }
     } catch (err) {
       return next(err);
