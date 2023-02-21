@@ -55,9 +55,14 @@ async function updateCustomer(updateData) {
   };
 }
 
+async function deleteCustomer(customerID) {
+  return await Customer.findByIdAndDelete(customerID);
+}
+
 module.exports = {
   createCustomer,
   getAllCustomers,
   getCustomerByID,
   updateCustomer,
+  deleteCustomer,
 };
