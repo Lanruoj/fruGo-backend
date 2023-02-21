@@ -12,7 +12,7 @@ router.get("/", async (request, response, next) => {
   }
   response.status(200).json({
     status: 200,
-    result: result,
+    result: result.flat(),
     accessToken: request.accessToken || null,
   });
 });
