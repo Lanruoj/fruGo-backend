@@ -28,7 +28,7 @@ const customers = [
     username: "john_smith",
     firstName: "John",
     lastName: "Smith",
-    city: null,
+    _city: null,
     streetAddress: "1234 John street",
   },
   {
@@ -37,7 +37,7 @@ const customers = [
     username: "sally_smith",
     firstName: "Sally",
     lastName: "Smith",
-    city: null,
+    _city: null,
     streetAddress: "1234 Sally street",
   },
   {
@@ -46,7 +46,7 @@ const customers = [
     username: "jane_doe",
     firstName: "Jane",
     lastName: "Doe",
-    city: null,
+    _city: null,
     streetAddress: "1234 Jane street",
   },
 ];
@@ -67,7 +67,7 @@ const merchants = [
     name: "Melbourne Merchant",
     description: "The best merchant in all of Melbourne",
     streetAddress: "1234 Merchant street",
-    city: null,
+    _city: null,
   },
   {
     email: "sydney_merchant@email.com",
@@ -76,7 +76,7 @@ const merchants = [
     name: "Sydney Merchant",
     description: "The best merchant in all of Sydney",
     streetAddress: "1234 Merchant street",
-    city: null,
+    _city: null,
   },
   {
     email: "brisbane_merchant@email.com",
@@ -85,7 +85,7 @@ const merchants = [
     name: "Brisbane Merchant",
     description: "The best merchant in all of Brisbane",
     streetAddress: "1234 Merchant street",
-    city: null,
+    _city: null,
   },
 ];
 
@@ -109,35 +109,35 @@ const products = [
 
 const stockProducts = [
   {
-    merchant: null,
-    product: null,
+    _merchant: null,
+    _product: null,
     quantity: 23,
   },
   {
-    merchant: null,
-    product: null,
+    _merchant: null,
+    _product: null,
     quantity: 99,
   },
   {
-    merchant: null,
-    product: null,
+    _merchant: null,
+    _product: null,
     quantity: 0,
   },
 ];
 
 const carts = [
   {
-    customer: null,
-    merchant: null,
+    _customer: null,
+    _merchant: null,
     products: [],
   },
   {
-    customer: null,
-    merchant: null,
+    _customer: null,
+    _merchant: null,
     products: [],
   },
   {
-    customer: null,
+    _customer: null,
     merchant: null,
     products: [],
   },
@@ -145,14 +145,14 @@ const carts = [
 
 const orders = [
   {
-    cart: null,
+    _cart: null,
   },
   {
-    cart: null,
+    _cart: null,
     status: "complete",
   },
   {
-    cart: null,
+    _cart: null,
     status: "cancelled",
   },
 ];
@@ -181,7 +181,7 @@ async function seedDatabase() {
       // Hash each password & assign a city to each customer
       for ([index, customer] of customers.entries()) {
         customer.password = await hashString(process.env.USER_SEED_PASSWORD);
-        customer.city = createdCities[index];
+        customer._city = createdCities[index];
       }
       const createdCustomers = await Customer.insertMany(customers);
       // Seed admin
@@ -190,27 +190,27 @@ async function seedDatabase() {
       // Seed merchants
       for ([index, merchant] of merchants.entries()) {
         merchant.password = await hashString(process.env.USER_SEED_PASSWORD);
-        merchant.city = createdCities[index];
+        merchant._city = createdCities[index];
       }
       const createdMerchants = await Merchant.insertMany(merchants);
       // Seed products
       const createdProducts = await Product.insertMany(products);
       // Seed stock products
       for ([index, stockProduct] of stockProducts.entries()) {
-        stockProduct.merchant = createdMerchants[index];
-        stockProduct.product = createdProducts[index];
+        stockProduct._merchant = createdMerchants[index];
+        stockProduct._product = createdProducts[index];
       }
       const createdStockProducts = await StockProduct.insertMany(stockProducts);
       // Seed carts
       for ([index, cart] of carts.entries()) {
-        cart.customer = createdCustomers[index];
-        cart.merchant = createdMerchants[index];
+        cart._customer = createdCustomers[index];
+        cart._merchant = createdMerchants[index];
         cart.products = createdStockProducts;
       }
       const createdCarts = await Cart.insertMany(carts);
       // Seed orders
       for ([index, order] of orders.entries()) {
-        order.cart = createdCarts[index];
+        order._cart = createdCarts[index];
       }
       const createdOrders = await Order.insertMany(orders);
     })

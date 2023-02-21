@@ -1,12 +1,12 @@
 const mongoose = require("mongoose");
 
 const StockProductSchema = new mongoose.Schema({
-  merchant: {
+  _merchant: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Merchant",
     required: true,
   },
-  product: {
+  _product: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "Product",
     required: true,
