@@ -33,7 +33,7 @@ router.post("/register", async (request, response, next) => {
   const accessToken = await generateAccessToken(newCustomer._id);
   response
     .status(201)
-    .json({ customer: newCustomer, accessToken: accessToken });
+    .json({ status: 201, customer: newCustomer, accessToken: accessToken });
 });
 
 // Get all customers (admin only)
