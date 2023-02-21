@@ -23,7 +23,10 @@ async function getCustomerByID(customerID) {
   try {
     customer = await Customer.findById(customerID).exec();
   } catch (error) {
-    throw new Error(error);
+    throw {
+      message: `: : No customer found with ID of ${customerID}`,
+      status: 404,
+    };
   }
   return customer;
 }
