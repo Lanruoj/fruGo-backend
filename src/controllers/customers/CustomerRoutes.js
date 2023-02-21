@@ -36,7 +36,7 @@ router.post("/register", async (request, response, next) => {
     .json({ status: 201, customer: newCustomer, accessToken: accessToken });
 });
 
-// Get all customers (admin only)
+// Get list of all customers (admin only)
 router.get(
   "/",
   authenticateUser,
@@ -52,7 +52,7 @@ router.get(
 
 // Get customer profile by ID (own profile or admin only)
 router.get(
-  "/profile/:id",
+  "/:id",
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
@@ -66,7 +66,7 @@ router.get(
 
 // Update customer (own profile or admin only)
 router.put(
-  "/profile/:id",
+  "/:id",
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
