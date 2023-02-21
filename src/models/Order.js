@@ -2,8 +2,12 @@ const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema(
   {
-    cart: { type: mongoose.Schema.Types.ObjectId, ref: "Cart", required: true },
-    status: {
+    _cart: {
+      type: mongoose.Schema.Types.ObjectId,
+      ref: "Cart",
+      required: true,
+    },
+    _status: {
       type: String,
       default: "pending",
       enum: ["pending", "complete", "cancelled"],

@@ -50,7 +50,7 @@ const CustomerSchema = new mongoose.Schema({
       message: "Last name may only contain letters",
     },
   },
-  city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
+  _city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
   streetAddress: {
     type: String,
     required: true,

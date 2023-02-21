@@ -42,7 +42,7 @@ const MerchantSchema = new mongoose.Schema({
   },
   description: { type: String, required: true },
   streetAddress: { type: String, required: true },
-  city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
+  _city: { type: mongoose.Schema.Types.ObjectId, ref: "City", required: true },
   stock: [
     {
       type: mongoose.Schema.Types.ObjectId,
