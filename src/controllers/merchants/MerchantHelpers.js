@@ -1,10 +1,21 @@
 const { Merchant } = require("../../models/Merchant");
 
+async function createMerchant(data) {
+  let newMerchant;
+  try {
+    newMerchant = await Merchant.create(data);
+  } catch (error) {
+    error.status = 400;
+    throw new Error(error);
+  }
+  return newMerchant;
+}
+
 async function getMerchantByID(merchantID) {
   let result;
   try {
     result = await Merchant.findById(merchantID).exec();
-  } catch (err) {
+  } catch (error) {
     throw {
       message: `: : No merchants found with ID ${merchantID}`,
       status: 404,
@@ -13,4 +24,4 @@ async function getMerchantByID(merchantID) {
   return result;
 }
 
-module.exports = { getMerchantByID };
+module.exports = { getMerchantByID, createMerchant };
