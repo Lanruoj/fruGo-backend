@@ -62,8 +62,9 @@ connectDatabase(databaseURL)
             ${error}`);
   });
 
-app.use("/customers", require("./controllers/customers/CustomerRoutes"));
 app.use("/auth", require("./controllers/auth/authRoutes"));
+app.use("/customers", require("./controllers/customers/CustomerRoutes"));
+app.use("/merchants", require("./controllers/merchants/MerchantRoutes"));
 
 app.get("/", (request, response) => {
   response.status(200).json({
