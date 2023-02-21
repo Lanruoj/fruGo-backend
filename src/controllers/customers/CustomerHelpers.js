@@ -15,8 +15,7 @@ async function createCustomer(data) {
 }
 
 async function getAllCustomers() {
-  const customers = await Customer.find({}).exec();
-  return customers;
+  return await Customer.find({}).exec();
 }
 
 async function getCustomerByID(customerID) {
@@ -59,30 +58,10 @@ async function deleteCustomer(customerID) {
   return await Customer.findByIdAndDelete(customerID);
 }
 
-async function filterCustomers(queryString) {
-  const queries = Object.entries(queryString);
-  // Construct query object to use in find()
-  let queryObject = {};
-  for (query of queries) {
-    const key = query[0];
-    const value = { $regex: new RegExp(query[1], "i") };
-    queryObject[key] = value;
-  }
-  const results = await Customer.find(queryObject).exec();
-  if (!results.length) {
-    throw {
-      message: ": : No customers found matching that criteria",
-      status: 404,
-    };
-  }
-  return results;
-}
-
 module.exports = {
   createCustomer,
   getAllCustomers,
   getCustomerByID,
   updateCustomer,
   deleteCustomer,
-  filterCustomers,
 };
