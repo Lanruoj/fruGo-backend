@@ -65,9 +65,14 @@ router.get(
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
-    const customer = await getCustomerByID(request.params.id);
+    let result;
+    try {
+      result = await getCustomerByID(request.params.id);
+    } catch (err) {
+      return next(err);
+    }
     response.status(200).json({
-      profile: customer,
+      result: result,
       accessToken: request.accessToken,
     });
   }
