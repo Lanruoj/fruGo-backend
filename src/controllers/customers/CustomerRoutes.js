@@ -6,6 +6,7 @@ const {
   getCustomerByID,
   updateCustomer,
   deleteCustomer,
+  filterCustomers,
 } = require("./CustomerHelpers");
 const { generateAccessToken } = require("../auth/authHelpers");
 const {
@@ -37,14 +38,20 @@ router.post("/register", async (request, response, next) => {
     .json({ status: 201, customer: newCustomer, accessToken: accessToken });
 });
 
-// Get list of all customers (admin only)
+// Get list of customers with optional search query (admin only)
 router.get(
   "/",
   authenticateUser,
   allowAdminOnly,
   async (request, response, next) => {
-    const customers = await getAllCustomers();
+    let customers;
+    if (!Object.keys(request.query).length) {
+      customers = await getAllCustomers();
+    } else {
+      customers = await filterCustomers(request.query);
+    }
     response.status(200).json({
+      status: 200,
       customers: customers,
       accessToken: request.accessToken,
     });
