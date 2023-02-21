@@ -5,6 +5,7 @@ const {
   getAllCustomers,
   getCustomerByID,
   updateCustomer,
+  deleteCustomer,
 } = require("./CustomerHelpers");
 const { generateAccessToken } = require("../auth/authHelpers");
 const {
@@ -33,10 +34,10 @@ router.post("/register", async (request, response, next) => {
   const accessToken = await generateAccessToken(newCustomer._id);
   response
     .status(201)
-    .json({ customer: newCustomer, accessToken: accessToken });
+    .json({ status: 201, customer: newCustomer, accessToken: accessToken });
 });
 
-// Get all customers (admin only)
+// Get list of all customers (admin only)
 router.get(
   "/",
   authenticateUser,
@@ -50,9 +51,9 @@ router.get(
   }
 );
 
-// Get customer profile by ID (own profile or admin only)
+// Get customer profile by ID (owner or admin only)
 router.get(
-  "/profile/:id",
+  "/:id",
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
@@ -64,9 +65,9 @@ router.get(
   }
 );
 
-// Update customer (own profile or admin only)
+// Update customer (owner or admin only)
 router.put(
-  "/profile/:id",
+  "/:id",
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
@@ -85,6 +86,17 @@ router.put(
       updates: result.updatedFields,
       accessToken: request.accessToken,
     });
+  }
+);
+
+// Delete customer (owner or admin only)
+router.delete(
+  "/:id",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    await deleteCustomer(request.params.id);
+    response.status(204).json();
   }
 );
 
