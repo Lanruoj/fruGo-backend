@@ -42,7 +42,7 @@ const jwt = require("jsonwebtoken");
 async function generateAccessToken(userID) {
   const encryptedUserData = encryptString(JSON.stringify(userID));
   const payload = { user: encryptedUserData };
-  return jwt.sign(payload, process.env.ACCESS_SECRET_KEY, { expiresIn: "30m" });
+  return jwt.sign(payload, process.env.ACCESS_SECRET_KEY, { expiresIn: "30d" });
 }
 
 function parseJWT(header) {
