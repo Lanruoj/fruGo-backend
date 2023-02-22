@@ -117,10 +117,28 @@ async function updateMerchantStock(updateData) {
   };
 }
 
+async function createNewStockProduct(data) {
+  try {
+    const newStockProduct = await StockProduct.create(data);
+    await Merchant.updateOne(
+      { _id: data._merchant },
+      { $push: { stock: newStockProduct } }
+    );
+    return newStockProduct;
+  } catch (error) {
+    console.log(error);
+    throw {
+      message: ": : Unable to add product to stock",
+      status: 400,
+    };
+  }
+}
+
 module.exports = {
   getMerchantByID,
   createMerchant,
   getMerchantStock,
   updateMerchant,
   updateMerchantStock,
+  createNewStockProduct,
 };
