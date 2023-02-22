@@ -55,13 +55,17 @@ async function updateMerchant(updateData) {
     originalMerchant = await Merchant.findByIdAndUpdate(id, data, {
       returnDocument: "before",
     })
+      .select("+password")
       .lean()
       .exec();
   } catch (err) {
     console.log(err);
     throw { message: ": : Merchant could not be found", status: 400 };
   }
-  const updatedMerchant = await Merchant.findById(id).lean().exec();
+  const updatedMerchant = await Merchant.findById(id)
+    .select("+password")
+    .lean()
+    .exec();
   const updatedFields = omit(updatedMerchant, (value, field) => {
     return originalMerchant[field]?.toString() === value?.toString();
   });
