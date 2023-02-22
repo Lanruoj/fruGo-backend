@@ -2,6 +2,7 @@ const mongoose = require("mongoose");
 const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
 const { hashString } = require("../controllers/auth/authHelpers");
+const { StockProduct } = require("./StockProduct");
 
 const MerchantSchema = new mongoose.Schema({
   email: {
