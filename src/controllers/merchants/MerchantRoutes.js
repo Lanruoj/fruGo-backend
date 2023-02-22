@@ -1,7 +1,11 @@
 const express = require("express");
 const router = express.Router();
 const { filterCollection } = require("../helpers");
-const { createMerchant, getMerchantByID } = require("./MerchantHelpers");
+const {
+  createMerchant,
+  getMerchantByID,
+  getMerchantStock,
+} = require("./MerchantHelpers");
 const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
 const { parseJWT } = require("../auth/authHelpers");
 
@@ -42,6 +46,20 @@ router.get("/:id", async (request, response, next) => {
   let result;
   try {
     result = await getMerchantByID(request.params.id);
+  } catch (error) {
+    return next(error);
+  }
+  response.status(200).json({
+    status: 200,
+    result: result,
+    accessToken: parseJWT(request.headers.authorization) || null,
+  });
+});
+
+router.get("/:id/stock", async (request, response, next) => {
+  let result;
+  try {
+    result = await getMerchantStock(request.params.id);
   } catch (error) {
     return next(error);
   }
