@@ -24,4 +24,26 @@ async function getMerchantByID(merchantID) {
   return result;
 }
 
-module.exports = { getMerchantByID, createMerchant };
+async function getMerchantStock(merchantID) {
+  let merchant, stock;
+  try {
+    merchant = await Merchant.findById(merchantID)
+      .populate({
+        path: "stock",
+        populate: {
+          path: "_product",
+          model: "Product",
+        },
+      })
+      .exec();
+    stock = merchant.stock;
+  } catch (error) {
+    throw {
+      message: `: : No merchants found with ID ${merchantID}`,
+      status: 404,
+    };
+  }
+  return stock;
+}
+
+module.exports = { getMerchantByID, createMerchant, getMerchantStock };

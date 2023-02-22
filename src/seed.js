@@ -68,6 +68,7 @@ const merchants = [
     description: "The best merchant in all of Melbourne",
     streetAddress: "1234 Merchant street",
     _city: null,
+    stock: [],
   },
   {
     email: "sydney_merchant@email.com",
@@ -77,6 +78,7 @@ const merchants = [
     description: "The best merchant in all of Sydney",
     streetAddress: "1234 Merchant street",
     _city: null,
+    stock: [],
   },
   {
     email: "brisbane_merchant@email.com",
@@ -86,6 +88,7 @@ const merchants = [
     description: "The best merchant in all of Brisbane",
     streetAddress: "1234 Merchant street",
     _city: null,
+    stock: [],
   },
 ];
 
@@ -129,17 +132,14 @@ const carts = [
   {
     _customer: null,
     _merchant: null,
-    products: [],
   },
   {
     _customer: null,
     _merchant: null,
-    products: [],
   },
   {
     _customer: null,
-    merchant: null,
-    products: [],
+    _merchant: null,
   },
 ];
 
@@ -201,6 +201,11 @@ async function seedDatabase() {
         stockProduct._product = createdProducts[index];
       }
       const createdStockProducts = await StockProduct.insertMany(stockProducts);
+      // Insert stock products into merchants
+      await Merchant.updateMany(
+        {},
+        { $push: { stock: { $each: createdStockProducts } } }
+      );
       // Seed carts
       for ([index, cart] of carts.entries()) {
         cart._customer = createdCustomers[index];
