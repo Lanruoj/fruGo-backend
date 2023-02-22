@@ -5,8 +5,13 @@ const {
   createMerchant,
   getMerchantByID,
   getMerchantStock,
+  updateMerchant,
 } = require("./MerchantHelpers");
-const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
+const {
+  authenticateUser,
+  allowAdminOnly,
+  allowOwnerOrAdmin,
+} = require("../auth/authMiddleware");
 const { parseJWT } = require("../auth/authHelpers");
 
 router.post(
@@ -55,6 +60,30 @@ router.get("/:id", async (request, response, next) => {
     accessToken: parseJWT(request.headers.authorization) || null,
   });
 });
+
+router.put(
+  "/:id",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    let result = {};
+    try {
+      result = await updateMerchant({
+        id: request.params.id,
+        data: request.body,
+      });
+    } catch (error) {
+      console.log(error);
+      error.status = 400;
+      return next(error);
+    }
+    response.status(200).json({
+      status: 200,
+      updates: result.updatedFields,
+      accessToken: request.accessToken,
+    });
+  }
+);
 
 router.get("/:id/stock", async (request, response, next) => {
   let result;
