@@ -189,7 +189,7 @@ async function seedDatabase() {
       const createdCustomers = await Customer.insertMany(customers);
       // Seed admin
       admin.password = await hashString(process.env.USER_SEED_PASSWORD);
-      const createdAdmin = await Admin.create(admin);
+      const createdAdmin = await Admin.insertMany(admin);
       // Seed merchants
       for ([index, merchant] of merchants.entries()) {
         merchant.password = await hashString(process.env.USER_SEED_PASSWORD);

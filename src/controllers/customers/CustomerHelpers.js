@@ -38,12 +38,16 @@ async function updateCustomer(updateData) {
     originalCustomer = await Customer.findByIdAndUpdate(id, data, {
       returnDocument: "before",
     })
+      .select("+password")
       .lean()
       .exec();
   } catch (err) {
     throw { message: ": : Customer could not be found", status: 400 };
   }
-  const updatedCustomer = await Customer.findById(id).lean().exec();
+  const updatedCustomer = await Customer.findById(id)
+    .select("+password")
+    .lean()
+    .exec();
   const updatedFields = omit(updatedCustomer, (value, field) => {
     return originalCustomer[field]?.toString() === value?.toString();
   });
@@ -61,7 +65,7 @@ async function updateCustomer(updateData) {
 }
 
 async function deleteCustomer(customerID) {
-  return await Customer.findByIdAndDelete(customerID);
+  return await Customer.findByIdAndDelete(customerID).exec();
 }
 
 module.exports = {

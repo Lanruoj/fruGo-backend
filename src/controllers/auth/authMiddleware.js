@@ -1,4 +1,9 @@
-const { verifyJWT, decryptString, parseJWT } = require("./authHelpers");
+const {
+  verifyJWT,
+  decryptString,
+  parseJWT,
+  validateHashedData,
+} = require("./authHelpers");
 const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
 const { Admin } = require("../../models/Admin");
@@ -51,17 +56,33 @@ async function allowOwnerOrAdmin(request, response, next) {
 async function validateLoginDetails(request, response, next) {
   const foundCustomer = await Customer.findOne({
     email: request.body.email,
-  }).exec();
+  })
+    .select("+password")
+    .exec();
   const foundMerchant = await Merchant.findOne({
     email: request.body.email,
-  }).exec();
+  })
+    .select("+password")
+    .exec();
   const foundAdmin = await Admin.findOne({
     email: request.body.email,
-  }).exec();
+  })
+    .select("+password")
+    .exec();
   const foundUser = foundCustomer || foundMerchant || foundAdmin;
-  if (!foundUser) throw new Error("Email is incorrect");
-  if (!foundUser.password == request.body.password) {
-    throw new Error("Password is incorrect");
+  if (!foundUser) {
+    const error = new Error(": : Email address does not exist");
+    error.status = 401;
+    return next(error);
+  }
+  const passwordIsValid = await validateHashedData(
+    request.body.password,
+    foundUser.password
+  );
+  if (!passwordIsValid) {
+    const error = new Error(": : Invalid password");
+    error.status = 401;
+    return next(error);
   }
   request.user = foundUser._id;
   request.role =

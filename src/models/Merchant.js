@@ -20,6 +20,7 @@ const MerchantSchema = new mongoose.Schema({
     type: String,
     required: true,
     minLength: [6, "Password must be greater than 6 characters long"],
+    select: false,
   },
   username: {
     type: String,
