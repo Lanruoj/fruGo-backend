@@ -7,6 +7,7 @@ const {
   getMerchantStock,
   updateMerchant,
   updateMerchantStock,
+  createNewStockProduct,
 } = require("./MerchantHelpers");
 const {
   authenticateUser,
@@ -117,6 +118,29 @@ router.put(
     }
     response.status(200).json({
       status: 200,
+      data: result,
+      accessToken: request.accessToken,
+    });
+  }
+);
+
+router.post(
+  "/:id/stock",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    let result;
+    try {
+      result = await createNewStockProduct({
+        _merchant: request.params.id,
+        _product: request.body._product,
+        quantity: request.body.quantity,
+      });
+    } catch (error) {
+      return next(error);
+    }
+    response.status(201).json({
+      status: 201,
       data: result,
       accessToken: request.accessToken,
     });
