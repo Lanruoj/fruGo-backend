@@ -6,6 +6,7 @@ const {
   getMerchantByID,
   getMerchantStock,
   updateMerchant,
+  updateMerchantStock,
 } = require("./MerchantHelpers");
 const {
   authenticateUser,
@@ -98,5 +99,28 @@ router.get("/:id/stock", async (request, response, next) => {
     accessToken: parseJWT(request.headers.authorization) || null,
   });
 });
+
+router.put(
+  "/:id/stock",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    let result = {};
+    try {
+      result = await updateMerchantStock({
+        _merchant: request.params.id,
+        quantity: request.body.quantity,
+      });
+    } catch (error) {
+      error.status = 400;
+      return next(error);
+    }
+    response.status(200).json({
+      status: 200,
+      data: result,
+      accessToken: request.accessToken,
+    });
+  }
+);
 
 module.exports = router;
