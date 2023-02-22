@@ -80,7 +80,7 @@ async function validateLoginDetails(request, response, next) {
     foundUser.password
   );
   if (!passwordIsValid) {
-    const error = new Error(": : Password is incorrect");
+    const error = new Error(": : Invalid password");
     error.status = 401;
     return next(error);
   }
