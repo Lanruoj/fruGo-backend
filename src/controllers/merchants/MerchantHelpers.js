@@ -1,3 +1,4 @@
+const { omit } = require("underscore");
 const { Merchant } = require("../../models/Merchant");
 
 async function createMerchant(data) {
@@ -46,4 +47,36 @@ async function getMerchantStock(merchantID) {
   return stock;
 }
 
-module.exports = { getMerchantByID, createMerchant, getMerchantStock };
+async function updateMerchant(updateData) {
+  const { id, data } = updateData;
+  let originalMerchant;
+  try {
+    originalMerchant = await Merchant.findByIdAndUpdate(id, data, {
+      returnDocument: "before",
+    })
+      .lean()
+      .exec();
+  } catch (err) {
+    console.log(err);
+    throw { message: ": : Merchant could not be found", status: 400 };
+  }
+  const updatedMerchant = await Merchant.findById(id).lean().exec();
+  const updatedFields = omit(updatedMerchant, (value, field) => {
+    return originalMerchant[field]?.toString() === value?.toString();
+  });
+  // MAY NOT NEED... /////////////////////////////////////////////
+  if (!Object.keys(updatedFields).length) {
+    throw { message: ": : No updates specified", status: 400 };
+  }
+  return {
+    updatedMerchant: updatedMerchant,
+    updatedFields: updatedFields,
+  };
+}
+
+module.exports = {
+  getMerchantByID,
+  createMerchant,
+  getMerchantStock,
+  updateMerchant,
+};
