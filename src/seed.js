@@ -97,16 +97,19 @@ const products = [
     name: "Banana",
     type: "Fruits",
     price: 2.99,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/8a/Banana-Single.jpg/800px-Banana-Single.jpg",
   },
   {
     name: "Apple",
     type: "Fruits",
     price: 1.99,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/5/5b/The_SugarBee_Apple_now_grown_in_Washington_State.jpg/240px-The_SugarBee_Apple_now_grown_in_Washington_State.jpg",
   },
   {
     name: "Almond",
     type: "Nuts",
     price: 0.1,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
 ];
 
