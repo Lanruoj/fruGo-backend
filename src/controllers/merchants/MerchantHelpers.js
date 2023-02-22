@@ -68,6 +68,9 @@ async function updateMerchant(updateData) {
   if (!Object.keys(updatedFields).length) {
     throw { message: ": : No updates specified", status: 400 };
   }
+  if (updatedFields.password) {
+    updatedFields.password = "Password updated";
+  }
   return {
     updatedMerchant: updatedMerchant,
     updatedFields: updatedFields,
