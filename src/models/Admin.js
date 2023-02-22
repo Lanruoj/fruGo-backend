@@ -56,8 +56,16 @@ AdminSchema.plugin(uniqueValidator, {
   message: "Email address must be unique",
 });
 
+// Hash password prior to saving
 AdminSchema.pre("save", async function () {
   this.password = await hashString(this.password);
+});
+
+// Hash password prior to saving upon update
+AdminSchema.pre("findOneAndUpdate", async function () {
+  if (this._update.password) {
+    this._update.password = await hashString(this._update.password);
+  }
 });
 
 const Admin = mongoose.model("Admin", AdminSchema);

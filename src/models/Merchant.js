@@ -57,9 +57,16 @@ MerchantSchema.plugin(uniqueValidator, {
   message: "Email address must be unique",
 });
 
+// Hash password prior to saving
 MerchantSchema.pre("save", async function () {
-  // Hash password prior to saving
   this.password = await hashString(this.password);
+});
+
+// Hash password prior to saving upon update
+MerchantSchema.pre("findOneAndUpdate", async function () {
+  if (this._update.password) {
+    this._update.password = await hashString(this._update.password);
+  }
 });
 
 const Merchant = mongoose.model("Merchant", MerchantSchema);
