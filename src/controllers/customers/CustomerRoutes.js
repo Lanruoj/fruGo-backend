@@ -15,6 +15,7 @@ const {
   allowOwnerOrAdmin,
 } = require("../auth/authMiddleware");
 const { filterCollection } = require("../helpers");
+const { getCartByCustomerID } = require("../carts/CartHelpers");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
@@ -110,6 +111,25 @@ router.delete(
   async (request, response, next) => {
     await deleteCustomer(request.params.id);
     response.status(204).json();
+  }
+);
+
+// Get customer's cart
+router.get(
+  "/:id/cart",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    try {
+      const cart = await getCartByCustomerID(request.params.id);
+      response.status(200).json({
+        status: 200,
+        cart: cart,
+        accessToken: request.accessToken,
+      });
+    } catch (error) {
+      return next(error);
+    }
   }
 );
 
