@@ -8,9 +8,11 @@ const { validateLoginDetails } = require("./authMiddleware");
 router.post("/login", validateLoginDetails, async (request, response, next) => {
   try {
     const accessToken = await loginUser(request.user);
+    const cart = await createCart(request.user);
     response.status(200).json({
       status: 200,
       user: request.user,
+      cart: cart,
       accessToken: accessToken,
     });
   } catch (error) {
