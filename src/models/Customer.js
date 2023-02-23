@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
-const { hashString } = require("../controllers/auth/authHelpers");
+const { hashString } = require("../controllers/helpers");
 
 const CustomerSchema = new mongoose.Schema({
   email: {
