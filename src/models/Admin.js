@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
-const { hashString } = require("../controllers/auth/authHelpers");
+const { hashString } = require("../controllers/helpers");
 
 const AdminSchema = new mongoose.Schema({
   email: {
@@ -50,6 +50,11 @@ const AdminSchema = new mongoose.Schema({
       },
       message: "Last name may only contain letters",
     },
+  },
+  loggedIn: {
+    type: Boolean,
+    required: true,
+    default: false,
   },
 });
 

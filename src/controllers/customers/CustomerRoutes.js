@@ -2,13 +2,10 @@ const express = require("express");
 const router = express.Router();
 const {
   createCustomer,
-  getAllCustomers,
   getCustomerByID,
   updateCustomer,
   deleteCustomer,
-  filterCustomers,
 } = require("./CustomerHelpers");
-const { generateAccessToken } = require("../auth/authHelpers");
 const {
   authenticateUser,
   allowAdminOnly,
@@ -16,28 +13,25 @@ const {
 } = require("../auth/authMiddleware");
 const { filterCollection } = require("../helpers");
 const { getCartByCustomerID } = require("../carts/CartHelpers");
+const { loginUser } = require("../auth/authHelpers");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
   let newCustomer;
   try {
-    newCustomer = await createCustomer({
-      email: request.body.email,
-      password: request.body.password,
-      username: request.body.username,
-      firstName: request.body.firstName,
-      lastName: request.body.lastName,
-      streetAddress: request.body.streetAddress,
-      city: request.body.city,
-    });
+    newCustomer = await createCustomer(request.body);
   } catch (error) {
     error.status = 422;
+    console.log(error);
     return next(error);
   }
-  const accessToken = await generateAccessToken(newCustomer._id);
+  const { user, cart, accessToken } = await loginUser(
+    newCustomer._id,
+    "Customer"
+  );
   response
     .status(201)
-    .json({ status: 201, customer: newCustomer, accessToken: accessToken });
+    .json({ status: 201, user: user, cart: cart, accessToken: accessToken });
 });
 
 // Get list of customers with optional search query (admin only)

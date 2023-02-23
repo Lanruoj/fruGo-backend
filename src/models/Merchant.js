@@ -1,8 +1,8 @@
 const mongoose = require("mongoose");
 const validator = require("validator");
 const uniqueValidator = require("mongoose-unique-validator");
-const { hashString } = require("../controllers/auth/authHelpers");
 const { StockProduct } = require("./StockProduct");
+const { hashString } = require("../controllers/helpers");
 
 const MerchantSchema = new mongoose.Schema({
   email: {
@@ -52,6 +52,11 @@ const MerchantSchema = new mongoose.Schema({
     },
   ],
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+  loggedIn: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 MerchantSchema.plugin(uniqueValidator, {

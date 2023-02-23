@@ -1,5 +1,4 @@
 const express = require("express");
-const { createCart } = require("../carts/CartHelpers");
 const router = express.Router();
 const { loginUser } = require("./authHelpers");
 const { validateLoginDetails } = require("./authMiddleware");
@@ -7,16 +6,20 @@ const { validateLoginDetails } = require("./authMiddleware");
 // Universal login
 router.post("/login", validateLoginDetails, async (request, response, next) => {
   try {
-    const accessToken = await loginUser(request.user);
-    const cart = await createCart(request.user);
-    response.status(200).json({
+    const { user, cart, accessToken } = await loginUser(
+      request.user,
+      request.role
+    );
+    const responseObject = {
       status: 200,
-      user: request.user,
-      cart: cart,
+      user: user,
       accessToken: accessToken,
-    });
+    };
+    if (cart) responseObject.cart = cart;
+    response.status(200).json(responseObject);
   } catch (error) {
     error.status = 401;
+    console.log(error);
     return next(error);
   }
 });
