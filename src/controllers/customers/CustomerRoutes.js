@@ -2,13 +2,10 @@ const express = require("express");
 const router = express.Router();
 const {
   createCustomer,
-  getAllCustomers,
   getCustomerByID,
   updateCustomer,
   deleteCustomer,
-  filterCustomers,
 } = require("./CustomerHelpers");
-const { generateAccessToken } = require("../auth/authHelpers");
 const {
   authenticateUser,
   allowAdminOnly,
@@ -16,6 +13,7 @@ const {
 } = require("../auth/authMiddleware");
 const { filterCollection } = require("../helpers");
 const { getCartByCustomerID } = require("../carts/CartHelpers");
+const { loginUser } = require("../auth/authHelpers");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
