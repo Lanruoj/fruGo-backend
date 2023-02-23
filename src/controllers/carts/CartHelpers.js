@@ -22,8 +22,8 @@ async function getCartByCustomerID(customerID) {
 async function createCart(customerID) {
   try {
     const customer = await Customer.findById(customerID).exec();
-    const city = customer._city;
-    const merchant = await Merchant.findOne({ _city: city });
+    const city = customer._city.toString();
+    const merchant = await Merchant.findOne({ _city: city }).exec();
     const cart = await Cart.create({
       _customer: customerID,
       _merchant: merchant,
