@@ -1,4 +1,6 @@
 const dotenv = require("dotenv").config();
+const mongoose = require("mongoose");
+const { createCart } = require("../carts/CartHelpers");
 
 // Encryption/decryption configuration
 const crypto = require("crypto");
@@ -38,6 +40,7 @@ async function validateHashedData(providedUnhashedData, storedHashedData) {
 
 // JWT configuration
 const jwt = require("jsonwebtoken");
+const { Cart } = require("../../models/Cart");
 
 async function generateAccessToken(userID) {
   const encryptedUserData = encryptString(JSON.stringify(userID));
@@ -57,9 +60,25 @@ function verifyJWT(token) {
   });
 }
 
-async function loginUser(userID) {
-  const token = await generateAccessToken(userID);
-  return token;
+async function loginUser(userID, role) {
+  const user = await mongoose.model(role).findById(userID).exec();
+  let cart;
+  // Log user in if not already logged in
+  if (!user.loggedIn) {
+    await mongoose
+      .model(role)
+      .findByIdAndUpdate(userID, { loggedIn: true })
+      .exec();
+    // If user is a customer, create a cart
+    if (role == "Customer") {
+      cart = await createCart(userID);
+    }
+  }
+  if (user.loggedIn && role == "Customer") {
+    cart = await Cart.findOne({ _customer: userID }).exec();
+  }
+  const accessToken = await generateAccessToken(userID);
+  return { user, cart, accessToken };
 }
 
 module.exports = {
