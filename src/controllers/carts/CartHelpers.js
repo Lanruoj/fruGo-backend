@@ -24,6 +24,8 @@ async function createCart(customerID) {
     const customer = await Customer.findById(customerID).exec();
     const city = customer._city.toString();
     const merchant = await Merchant.findOne({ _city: city }).exec();
+    if (!merchant)
+      throw { message: ": : No merchants currently found in your city" };
     const cart = await Cart.create({
       _customer: customerID,
       _merchant: merchant,

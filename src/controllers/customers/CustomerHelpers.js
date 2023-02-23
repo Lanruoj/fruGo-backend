@@ -1,8 +1,16 @@
 const { Customer } = require("../../models/Customer");
+const { City } = require("../../models/City");
 const { omit } = require("underscore");
 
 async function createCustomer(data) {
-  return await Customer.create(data);
+  if (!(await City.findById(data._city).exec())) {
+    throw {
+      message: `: : Invalid city`,
+      status: 400,
+    };
+  }
+  const customer = await Customer.create(data);
+  return customer;
 }
 
 async function getAllCustomers() {
