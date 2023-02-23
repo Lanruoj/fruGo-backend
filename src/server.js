@@ -42,7 +42,7 @@ switch (process.env.NODE_ENV.toLowerCase()) {
     databaseURL = process.env.DEV_DATABASE_URL;
     break;
   case "production":
-    databaseURL = process.env.DATABASE_URL;
+    databaseURL = process.env.PRODUCTION_DATABASE_URL;
     break;
   default:
     console.error(
