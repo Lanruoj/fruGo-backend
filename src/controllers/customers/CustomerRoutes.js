@@ -21,23 +21,19 @@ const { getCartByCustomerID } = require("../carts/CartHelpers");
 router.post("/register", async (request, response, next) => {
   let newCustomer;
   try {
-    newCustomer = await createCustomer({
-      email: request.body.email,
-      password: request.body.password,
-      username: request.body.username,
-      firstName: request.body.firstName,
-      lastName: request.body.lastName,
-      streetAddress: request.body.streetAddress,
-      city: request.body.city,
-    });
+    newCustomer = await createCustomer(request.body);
   } catch (error) {
     error.status = 422;
+    console.log(error);
     return next(error);
   }
-  const accessToken = await generateAccessToken(newCustomer._id);
+  const { user, cart, accessToken } = await loginUser(
+    newCustomer._id,
+    "Customer"
+  );
   response
     .status(201)
-    .json({ status: 201, customer: newCustomer, accessToken: accessToken });
+    .json({ status: 201, user: user, cart: cart, accessToken: accessToken });
 });
 
 // Get list of customers with optional search query (admin only)
