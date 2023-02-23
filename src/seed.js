@@ -165,6 +165,8 @@ async function seedDatabase() {
   await connectDatabase(
     environment == "development"
       ? process.env.DEV_DATABASE_URL
+      : environment == "production"
+      ? process.env.PRODUCTION_DATABASE_URL
       : process.env.TEST_DATABASE_URL
   )
     .then(async () => {
