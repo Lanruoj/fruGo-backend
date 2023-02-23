@@ -4,8 +4,7 @@ const { Merchant } = require("../../models/Merchant");
 
 async function getCartByCustomerID(customerID) {
   try {
-    const customer = await Customer.findById(customerID).exec();
-    const cart = await Cart.findOne({ _customer: customer._id })
+    const cart = await Cart.findOne({ _customer: customerID })
       .populate({
         path: "products",
         populate: { path: "_product", model: "Product" },
