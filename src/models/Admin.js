@@ -51,6 +51,11 @@ const AdminSchema = new mongoose.Schema({
       message: "Last name may only contain letters",
     },
   },
+  loggedIn: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 AdminSchema.plugin(uniqueValidator, {

@@ -57,6 +57,11 @@ const CustomerSchema = new mongoose.Schema({
     required: true,
   },
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+  loggedIn: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 // Handle 'unique: true' error

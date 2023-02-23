@@ -52,6 +52,11 @@ const MerchantSchema = new mongoose.Schema({
     },
   ],
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
+  loggedIn: {
+    type: Boolean,
+    required: true,
+    default: false,
+  },
 });
 
 MerchantSchema.plugin(uniqueValidator, {
