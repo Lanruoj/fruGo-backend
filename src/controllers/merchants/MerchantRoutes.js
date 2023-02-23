@@ -21,46 +21,43 @@ router.post(
   authenticateUser,
   allowAdminOnly,
   async (request, response, next) => {
-    let newMerchant;
     try {
-      newMerchant = await createMerchant(request.body);
+      const newMerchant = await createMerchant(request.body);
+      response.status(201).json({
+        status: 201,
+        newMerchant: newMerchant,
+        accessToken: request.accessToken,
+      });
     } catch (error) {
       return next(error);
     }
-    response.status(201).json({
-      status: 201,
-      newMerchant: newMerchant,
-      accessToken: request.accessToken,
-    });
   }
 );
 
 router.get("/", async (request, response, next) => {
-  let result;
   try {
-    result = await filterCollection("Merchant", request.query);
+    const result = await filterCollection("Merchant", request.query);
+    response.status(200).json({
+      status: 200,
+      result: result.flat(),
+      accessToken: parseJWT(request.headers.authorization) || null,
+    });
   } catch (error) {
     return next(error);
   }
-  response.status(200).json({
-    status: 200,
-    result: result.flat(),
-    accessToken: parseJWT(request.headers.authorization) || null,
-  });
 });
 
 router.get("/:id", async (request, response, next) => {
-  let result;
   try {
-    result = await getMerchantByID(request.params.id);
+    const result = await getMerchantByID(request.params.id);
+    response.status(200).json({
+      status: 200,
+      result: result,
+      accessToken: parseJWT(request.headers.authorization) || null,
+    });
   } catch (error) {
     return next(error);
   }
-  response.status(200).json({
-    status: 200,
-    result: result,
-    accessToken: parseJWT(request.headers.authorization) || null,
-  });
 });
 
 router.put(
@@ -68,37 +65,35 @@ router.put(
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
-    let result = {};
     try {
-      result = await updateMerchant({
+      const result = await updateMerchant({
         id: request.params.id,
         data: request.body,
+      });
+      response.status(200).json({
+        status: 200,
+        updates: result.updatedFields,
+        accessToken: request.accessToken,
       });
     } catch (error) {
       console.log(error);
       error.status = 400;
       return next(error);
     }
-    response.status(200).json({
-      status: 200,
-      updates: result.updatedFields,
-      accessToken: request.accessToken,
-    });
   }
 );
 
 router.get("/:id/stock", async (request, response, next) => {
-  let result;
   try {
-    result = await getMerchantStock(request.params.id);
+    const result = await getMerchantStock(request.params.id);
+    response.status(200).json({
+      status: 200,
+      result: result,
+      accessToken: parseJWT(request.headers.authorization) || null,
+    });
   } catch (error) {
     return next(error);
   }
-  response.status(200).json({
-    status: 200,
-    result: result,
-    accessToken: parseJWT(request.headers.authorization) || null,
-  });
 });
 
 router.put(
@@ -106,21 +101,20 @@ router.put(
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
-    let result = {};
     try {
-      result = await updateMerchantStock({
+      const result = await updateMerchantStock({
         _merchant: request.params.id,
         quantity: request.body.quantity,
+      });
+      response.status(200).json({
+        status: 200,
+        data: result,
+        accessToken: request.accessToken,
       });
     } catch (error) {
       error.status = 400;
       return next(error);
     }
-    response.status(200).json({
-      status: 200,
-      data: result,
-      accessToken: request.accessToken,
-    });
   }
 );
 
@@ -129,21 +123,20 @@ router.post(
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
-    let result;
     try {
-      result = await createNewStockProduct({
+      const result = await createNewStockProduct({
         _merchant: request.params.id,
         _product: request.body._product,
         quantity: request.body.quantity,
       });
+      response.status(201).json({
+        status: 201,
+        data: result,
+        accessToken: request.accessToken,
+      });
     } catch (error) {
       return next(error);
     }
-    response.status(201).json({
-      status: 201,
-      data: result,
-      accessToken: request.accessToken,
-    });
   }
 );
 
