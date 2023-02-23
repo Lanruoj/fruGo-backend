@@ -3,7 +3,7 @@ const {
   decryptString,
   parseJWT,
   validateHashedData,
-} = require("./authHelpers");
+} = require("../helpers");
 const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
 const { Admin } = require("../../models/Admin");
