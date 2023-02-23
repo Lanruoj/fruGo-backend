@@ -17,21 +17,20 @@ const { loginUser } = require("../auth/authHelpers");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
-  let newCustomer;
   try {
-    newCustomer = await createCustomer(request.body);
+    const newCustomer = await createCustomer(request.body);
+    const { user, cart, accessToken } = await loginUser(
+      newCustomer._id,
+      "Customer"
+    );
+    response
+      .status(201)
+      .json({ status: 201, user: user, cart: cart, accessToken: accessToken });
   } catch (error) {
     error.status = 422;
     console.log(error);
     return next(error);
   }
-  const { user, cart, accessToken } = await loginUser(
-    newCustomer._id,
-    "Customer"
-  );
-  response
-    .status(201)
-    .json({ status: 201, user: user, cart: cart, accessToken: accessToken });
 });
 
 // Get list of customers with optional search query (admin only)
@@ -40,17 +39,16 @@ router.get(
   authenticateUser,
   allowAdminOnly,
   async (request, response, next) => {
-    let result;
     try {
-      result = await filterCollection("Customer", request.query);
+      const result = await filterCollection("Customer", request.query);
+      response.status(200).json({
+        status: 200,
+        result: result.flat(),
+        accessToken: request.accessToken,
+      });
     } catch (err) {
       return next(err);
     }
-    response.status(200).json({
-      status: 200,
-      result: result.flat(),
-      accessToken: request.accessToken,
-    });
   }
 );
 
@@ -60,16 +58,15 @@ router.get(
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
-    let result;
     try {
-      result = await getCustomerByID(request.params.id);
+      const result = await getCustomerByID(request.params.id);
+      response.status(200).json({
+        result: result,
+        accessToken: request.accessToken,
+      });
     } catch (err) {
       return next(err);
     }
-    response.status(200).json({
-      result: result,
-      accessToken: request.accessToken,
-    });
   }
 );
 
@@ -79,21 +76,20 @@ router.put(
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
-    let result = {};
     try {
-      result = await updateCustomer({
+      const result = await updateCustomer({
         id: request.params.id,
         data: request.body,
+      });
+      response.status(200).json({
+        status: 200,
+        updates: result.updatedFields,
+        accessToken: request.accessToken,
       });
     } catch (error) {
       error.status = 400;
       return next(error);
     }
-    response.status(200).json({
-      status: 200,
-      updates: result.updatedFields,
-      accessToken: request.accessToken,
-    });
   }
 );
 
