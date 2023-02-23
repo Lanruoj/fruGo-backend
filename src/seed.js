@@ -1,7 +1,7 @@
 const mongoose = require("mongoose");
 require("dotenv").config();
 const { connectDatabase } = require("./database");
-const { hashString } = require("../src/controllers/auth/authHelpers");
+const { hashString } = require("./controllers/helpers");
 const { City } = require("./models/City");
 const { Customer } = require("./models/Customer");
 const { Admin } = require("./models/Admin");
