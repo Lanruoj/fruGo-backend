@@ -4,19 +4,18 @@ const { Customer } = require("../../models/Customer");
 const { City } = require("../../models/City");
 
 async function createCustomer(data) {
-  const cityID = mongoose.Types.ObjectId(data._city);
-  console.log(cityID);
-  const cityExists = await City.findOne({
-    _id: cityID,
-  }).exec();
-  if (!cityExists) {
-    throw {
-      message: `: : Invalid city`,
-      status: 400,
-    };
+  try {
+    const cityID = mongoose.Types.ObjectId(data._city);
+    const cityExists = await City.findOne({
+      _id: cityID,
+    }).exec();
+    if (!cityExists) console.log("No city");
+    const customer = await Customer.create(data);
+    return customer;
+  } catch (error) {
+    console.log(error);
+    throw error;
   }
-  const customer = await Customer.create(data);
-  return customer;
 }
 
 async function getAllCustomers() {
