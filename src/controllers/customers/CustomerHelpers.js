@@ -7,6 +7,8 @@ async function createCustomer(data) {
   try {
     const cityID = data._city;
     const cityExists = await City.findById(cityID).exec();
+    const cities = await City.find({}).exec();
+    console.log(cities);
     if (!cityExists) {
       throw {
         message: `: : Invalid city [${cityID}]`,
