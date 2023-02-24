@@ -3,6 +3,7 @@ const { City } = require("../../models/City");
 const { omit } = require("underscore");
 
 async function createCustomer(data) {
+  console.log(data);
   console.log(data._city);
   const cityExists = await City.findById(data._city).exec();
   console.log(cityExists);
