@@ -37,4 +37,18 @@ async function createCart(customerID) {
   }
 }
 
-module.exports = { getCartByCustomerID, createCart };
+async function addToCart(customerID, stockProductID) {
+  try {
+    const cart = await Cart.findOneAndUpdate(
+      { _customer: customerID },
+      { $push: { products: stockProductID } }
+    ).exec();
+    return cart;
+  } catch (error) {
+    console.log(error);
+    error.status = 400;
+    throw error;
+  }
+}
+
+module.exports = { getCartByCustomerID, createCart, addToCart };
