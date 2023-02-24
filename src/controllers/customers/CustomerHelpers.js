@@ -1,25 +1,22 @@
 const { omit } = require("underscore");
-const mongoose = require("mongoose");
 const { Customer } = require("../../models/Customer");
 const { City } = require("../../models/City");
 
 async function createCustomer(data) {
   try {
-    const cityID = mongoose.Types.ObjectId(data._city);
-    const cityExists = await City.findOne({
-      _id: cityID,
-    }).exec();
-    if (!cityExists) console.log("No city");
+    const cityExists = await City.findById(data._city).exec();
+    if (!cityExists) {
+      throw {
+        message: `: : Invalid city [${cityID}]`,
+        status: 404,
+      };
+    }
     const customer = await Customer.create(data);
     return customer;
   } catch (error) {
     console.log(error);
     throw error;
   }
-}
-
-async function getAllCustomers() {
-  return await Customer.find({}).exec();
 }
 
 async function getCustomerByID(customerID) {
@@ -74,7 +71,6 @@ async function deleteCustomer(customerID) {
 
 module.exports = {
   createCustomer,
-  getAllCustomers,
   getCustomerByID,
   updateCustomer,
   deleteCustomer,
