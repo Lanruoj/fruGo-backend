@@ -1,5 +1,4 @@
 const { omit } = require("underscore");
-const mongoose = require("mongoose");
 const { Customer } = require("../../models/Customer");
 const { City } = require("../../models/City");
 
@@ -18,10 +17,6 @@ async function createCustomer(data) {
     console.log(error);
     throw error;
   }
-}
-
-async function getAllCustomers() {
-  return await Customer.find({}).exec();
 }
 
 async function getCustomerByID(customerID) {
@@ -76,7 +71,6 @@ async function deleteCustomer(customerID) {
 
 module.exports = {
   createCustomer,
-  getAllCustomers,
   getCustomerByID,
   updateCustomer,
   deleteCustomer,
