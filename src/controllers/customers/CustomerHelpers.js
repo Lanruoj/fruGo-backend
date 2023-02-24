@@ -3,7 +3,10 @@ const { City } = require("../../models/City");
 const { omit } = require("underscore");
 
 async function createCustomer(data) {
-  if (!(await City.findById(data._city).exec())) {
+  console.log(data._city);
+  const cityExists = await City.findById(data._city).exec();
+  console.log(cityExists);
+  if (!cityExists) {
     throw {
       message: `: : Invalid city`,
       status: 400,
