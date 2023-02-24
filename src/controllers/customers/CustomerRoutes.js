@@ -123,8 +123,8 @@ router.get(
   }
 );
 
-router.put(
-  "/:id/cart",
+router.post(
+  "/:id/cart/products",
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
