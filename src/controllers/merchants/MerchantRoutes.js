@@ -14,7 +14,7 @@ const {
   allowAdminOnly,
   allowOwnerOrAdmin,
 } = require("../auth/authMiddleware");
-const { parseJWT } = require("../auth/authHelpers");
+const { parseJWT } = require("../helpers");
 
 router.post(
   "/register",
