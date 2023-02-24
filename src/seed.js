@@ -171,7 +171,7 @@ async function seedDatabase() {
       databaseURL = process.env.DEV_DATABASE_URL;
       break;
     case "production":
-      databaseURL = process.env.PRODUCTION_DATABASE_URL;
+      databaseURL = process.env.DATABASE_URL;
       break;
     default:
       console.error(
@@ -179,7 +179,6 @@ async function seedDatabase() {
       );
       break;
   }
-
   await connectDatabase(databaseURL)
     .then(async () => {
       const collections = await mongoose.connection.db
