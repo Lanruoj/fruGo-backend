@@ -9,8 +9,7 @@
     "seed-production": "NODE_ENV=production SEED=true node src/seed.js",
     "start-dev": "NODE_ENV=development nodemon --trace-warnings src/index.js",
     "start-production": "NODE_ENV=production node src/index.js",
-    "start": "NODE_ENV=production node src/index.js",
-    "build": "npm run build"
+    "start": "NODE_ENV=production node src/index.js"
   },
   "repository": {
     "type": "git",
