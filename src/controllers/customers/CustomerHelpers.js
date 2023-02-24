@@ -1,9 +1,14 @@
+const { omit } = require("underscore");
+const mongoose = require("mongoose");
 const { Customer } = require("../../models/Customer");
 const { City } = require("../../models/City");
-const { omit } = require("underscore");
 
 async function createCustomer(data) {
-  const cityExists = await City.findOne({ _id: data._city }).exec();
+  const cityID = mongoose.Types.ObjectId(data._city);
+  console.log(cityID);
+  const cityExists = await City.findOne({
+    _id: cityID,
+  }).exec();
   if (!cityExists) {
     throw {
       message: `: : Invalid city`,
