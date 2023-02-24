@@ -9,19 +9,13 @@ async function createCustomer(data) {
     const cityExists = await City.findOne({
       _id: cityID,
     }).exec();
-    if (!cityExists) {
-      throw {
-        message: `: : Invalid city`,
-        status: 400,
-      };
-    }
+    if (!cityExists) console.log("No city");
+    const customer = await Customer.create(data);
+    return customer;
   } catch (error) {
     console.log(error);
     throw error;
   }
-
-  const customer = await Customer.create(data);
-  return customer;
 }
 
 async function getAllCustomers() {
