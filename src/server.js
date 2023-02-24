@@ -23,20 +23,22 @@ app.use(
 );
 
 // Configure environment variables
-const PORT = process.env.PORT;
-let databaseURL, HOST;
+let databaseURL, HOST, PORT;
 switch (process.env.NODE_ENV.toLowerCase()) {
   case "test":
     databaseURL = process.env.TEST_DATABASE_URL;
     HOST = process.env.DEV_HOST;
+    PORT = process.env.DEV_PORT;
     break;
   case "development":
     databaseURL = process.env.DEV_DATABASE_URL;
     HOST = process.env.DEV_HOST;
+    PORT = process.env.DEV_PORT;
     break;
   case "production":
-    databaseURL = process.env.PRODUCTION_DATABASE_URL;
-    HOST = process.env.PRODUCTION_HOST;
+    databaseURL = process.env.DATABASE_URL;
+    HOST = process.env.HOST;
+    PORT = process.env.PORT;
     break;
   default:
     console.error(
