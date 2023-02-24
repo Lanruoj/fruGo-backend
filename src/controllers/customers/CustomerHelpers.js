@@ -7,7 +7,7 @@ async function createCustomer(data) {
     const cityExists = await City.findById(data._city).exec();
     if (!cityExists) {
       throw {
-        message: `: : Invalid city [${cityID}]`,
+        message: `: : Invalid city [${data._city}]`,
         status: 404,
       };
     }
