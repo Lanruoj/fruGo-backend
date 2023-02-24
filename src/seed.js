@@ -1,5 +1,5 @@
 const mongoose = require("mongoose");
-require("dotenv").config();
+const dotenv = require("dotenv").config();
 const { connectDatabase } = require("./database");
 const { hashString } = require("./controllers/helpers");
 const { City } = require("./models/City");
@@ -161,14 +161,26 @@ const orders = [
 ];
 
 async function seedDatabase() {
-  const environment = process.env.NODE_ENV || null;
-  await connectDatabase(
-    environment == "development"
-      ? process.env.DEV_DATABASE_URL
-      : environment == "production"
-      ? process.env.PRODUCTION_DATABASE_URL
-      : process.env.TEST_DATABASE_URL
-  )
+  // Configure database URL
+  let databaseURL;
+  switch (process.env.NODE_ENV.toLowerCase()) {
+    case "test":
+      databaseURL = process.env.TEST_DATABASE_URL;
+      break;
+    case "development":
+      databaseURL = process.env.DEV_DATABASE_URL;
+      break;
+    case "production":
+      databaseURL = process.env.PRODUCTION_DATABASE_URL;
+      break;
+    default:
+      console.error(
+        "Incorrect JavaScript environment specified, database will not be connected"
+      );
+      break;
+  }
+
+  await connectDatabase(databaseURL)
     .then(async () => {
       const collections = await mongoose.connection.db
         .listCollections()
