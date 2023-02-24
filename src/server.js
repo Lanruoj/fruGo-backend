@@ -79,6 +79,7 @@ app.get("/", (request, response) => {
 
 app.use("*", (error, request, response, next) => {
   if (error) {
+    console.log(error);
     response.status(error.status || 500).json({
       status: error.status,
       error: {
