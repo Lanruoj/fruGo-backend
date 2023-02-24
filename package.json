@@ -10,7 +10,7 @@
     "start-dev": "NODE_ENV=development nodemon --trace-warnings src/index.js",
     "start-production": "NODE_ENV=production node src/index.js",
     "start": "NODE_ENV=production node src/index.js",
-    "build": "npm build"
+    "build": "npm run build"
   },
   "repository": {
     "type": "git",
