@@ -52,4 +52,19 @@ async function addToCart(customerID, stockProductID) {
   }
 }
 
-module.exports = { getCartByCustomerID, createCart, addToCart };
+async function removeFromCart(customerID, stockProductID) {
+  try {
+    const cart = await Cart.findOneAndUpdate(
+      { _customer: customerID },
+      { $pull: { products: stockProductID } },
+      { returnDocument: "after" }
+    ).exec();
+    return cart;
+  } catch (error) {
+    console.log(error);
+    error.status = 400;
+    throw error;
+  }
+}
+
+module.exports = { getCartByCustomerID, createCart, addToCart, removeFromCart };
