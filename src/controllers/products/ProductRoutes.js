@@ -1,6 +1,7 @@
 const express = require("express");
 const { filterCollection } = require("../helpers");
-const { getProductByID } = require("./ProductHelpers");
+const { getProductByID, createProduct } = require("./ProductHelpers");
+const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
 const router = express.Router();
 
 router.get("/", async (request, response, next) => {
@@ -26,5 +27,23 @@ router.get("/:id", async (request, response, next) => {
     return next(error);
   }
 });
+
+router.post(
+  "/",
+  authenticateUser,
+  allowAdminOnly,
+  async (request, response, next) => {
+    try {
+      const newProduct = await createProduct(request.body);
+      response.status(201).json({
+        status: 201,
+        data: newProduct,
+        accessToken: request.accessToken,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
 
 module.exports = router;
