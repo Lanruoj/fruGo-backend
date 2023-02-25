@@ -4,6 +4,7 @@ const {
   getProductByID,
   createProduct,
   deleteProduct,
+  updateProduct,
 } = require("./ProductHelpers");
 const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
 const router = express.Router();
@@ -50,6 +51,27 @@ router.post(
   }
 );
 
+router.put(
+  "/:id",
+  authenticateUser,
+  allowAdminOnly,
+  async (request, response, next) => {
+    try {
+      const product = await updateProduct({
+        id: request.params.id,
+        data: request.body,
+      });
+      response.status(200).json({
+        status: 200,
+        data: product,
+        accessToken: request.accessToken,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
+
 router.delete(
   "/:id",
   authenticateUser,
@@ -57,8 +79,8 @@ router.delete(
   async (request, response, next) => {
     try {
       const product = await deleteProduct(request.params.id);
-      response.status(201).json({
-        status: 201,
+      response.status(200).json({
+        status: 200,
         data: product,
         accessToken: request.accessToken,
       });
