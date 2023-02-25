@@ -14,7 +14,7 @@ const StockProductSchema = new mongoose.Schema({
     required: true,
     unique: true,
   },
-  quantity: { type: Number, required: true },
+  quantity: { type: Number, required: true, default: 0 },
 });
 
 // Handle 'unique: true' error
