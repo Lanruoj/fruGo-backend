@@ -82,7 +82,7 @@ async function updateMerchant(updateData) {
   };
 }
 
-async function updateMerchantStock(updateData) {
+async function updateStockQuantity(updateData) {
   let { _merchant, quantity } = updateData;
   let originalStockProduct;
   try {
@@ -138,11 +138,25 @@ async function createNewStockProduct(data) {
   }
 }
 
+async function removeStockProduct(data) {
+  try {
+    const stockProduct = await StockProduct.findByIdAndDelete(data).exec();
+    return stockProduct;
+  } catch (error) {
+    console.log(error);
+    throw {
+      message: ": : Unable to remove product from stock",
+      status: 400,
+    };
+  }
+}
+
 module.exports = {
   getMerchantByID,
   createMerchant,
   getMerchantStock,
   updateMerchant,
-  updateMerchantStock,
+  updateStockQuantity,
   createNewStockProduct,
+  removeStockProduct,
 };
