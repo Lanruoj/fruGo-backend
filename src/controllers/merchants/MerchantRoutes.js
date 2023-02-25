@@ -6,8 +6,9 @@ const {
   getMerchantByID,
   getMerchantStock,
   updateMerchant,
-  updateMerchantStock,
+  updateStockQuantity,
   createNewStockProduct,
+  removeStockProduct,
 } = require("./MerchantHelpers");
 const {
   authenticateUser,
@@ -83,7 +84,7 @@ router.put(
   }
 );
 
-router.get("/:id/stock", async (request, response, next) => {
+router.get("/:id/stock/products", async (request, response, next) => {
   try {
     const result = await getMerchantStock(request.params.id);
     response.status(200).json({
@@ -97,12 +98,12 @@ router.get("/:id/stock", async (request, response, next) => {
 });
 
 router.put(
-  "/:id/stock",
+  "/:id/stock/products",
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
     try {
-      const result = await updateMerchantStock({
+      const result = await updateStockQuantity({
         _merchant: request.params.id,
         quantity: request.body.quantity,
       });
@@ -119,7 +120,7 @@ router.put(
 );
 
 router.post(
-  "/:id/stock",
+  "/:id/stock/products",
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
@@ -129,8 +130,26 @@ router.post(
         _product: request.body._product,
         quantity: request.body.quantity,
       });
-      response.status(201).json({
-        status: 201,
+      response.status(200).json({
+        status: 200,
+        data: result,
+        accessToken: request.accessToken,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
+
+router.delete(
+  "/:id/stock/products",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    try {
+      const result = await removeStockProduct(request.body.stockProduct);
+      response.status(200).json({
+        status: 200,
         data: result,
         accessToken: request.accessToken,
       });
