@@ -1,7 +1,14 @@
 const { Product } = require("../../models/Product");
 
 async function getProductByID(productID) {
-  return await Product.findById(productID).exec();
+  const product = await Product.findById(productID).exec();
+  if (!product) {
+    throw {
+      message: ": : Product could not be found",
+      status: 404,
+    };
+  }
+  return product;
 }
 
 async function createProduct(data) {
@@ -17,4 +24,17 @@ async function createProduct(data) {
   }
 }
 
-module.exports = { getProductByID, createProduct };
+async function deleteProduct(data) {
+  try {
+    const product = await Product.findByIdAndDelete(data);
+    return product;
+  } catch (error) {
+    console.log(error);
+    throw {
+      message: ": : Product could not be deleted",
+      status: 400,
+    };
+  }
+}
+
+module.exports = { getProductByID, createProduct, deleteProduct };
