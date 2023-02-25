@@ -41,7 +41,7 @@ async function addToCart(customerID, stockProductID) {
   try {
     const cart = await Cart.findOneAndUpdate(
       { _customer: customerID },
-      { $push: { products: stockProductID } },
+      { $addToSet: { products: stockProductID } },
       { returnDocument: "after" }
     )
       .populate({
