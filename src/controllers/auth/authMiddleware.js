@@ -9,28 +9,28 @@ const { Merchant } = require("../../models/Merchant");
 const { Admin } = require("../../models/Admin");
 
 async function authenticateUser(request, response, next) {
-  let verifiedJWT;
   try {
-    verifiedJWT = verifyJWT(request.headers.authorization);
+    const verifiedJWT = verifyJWT(request.headers.authorization);
+    const decryptedData = decryptString(verifiedJWT.payload.user);
+    const userID = JSON.parse(decryptedData);
+    // Find user subtype
+    const foundCustomer = await Customer.findById(userID).exec();
+    const foundMerchant = await Merchant.findById(userID).exec();
+    const foundAdmin = await Admin.findById(userID).exec();
+    const userDocument = foundCustomer || foundMerchant || foundAdmin;
+    request.user = userDocument.id;
+    request.role =
+      (foundCustomer && "Customer") ||
+      (foundMerchant && "Merchant") ||
+      (foundAdmin && "Admin") ||
+      null;
+    request.accessToken = parseJWT(request.headers.authorization);
+    next();
   } catch (error) {
+    error.message = ": : User authentication failed";
     error.status = 401;
     return next(error);
   }
-  const decryptedData = decryptString(verifiedJWT.payload.user);
-  const userID = JSON.parse(decryptedData);
-  // Find user subtype
-  const foundCustomer = await Customer.findById(userID).exec();
-  const foundMerchant = await Merchant.findById(userID).exec();
-  const foundAdmin = await Admin.findById(userID).exec();
-  const userDocument = foundCustomer || foundMerchant || foundAdmin;
-  request.user = userDocument.id;
-  request.role =
-    (foundCustomer && "Customer") ||
-    (foundMerchant && "Merchant") ||
-    (foundAdmin && "Admin") ||
-    null;
-  request.accessToken = parseJWT(request.headers.authorization);
-  next();
 }
 
 async function allowAdminOnly(request, response, next) {
