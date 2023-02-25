@@ -1,6 +1,10 @@
 const express = require("express");
 const { filterCollection } = require("../helpers");
-const { getProductByID, createProduct } = require("./ProductHelpers");
+const {
+  getProductByID,
+  createProduct,
+  deleteProduct,
+} = require("./ProductHelpers");
 const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
 const router = express.Router();
 
@@ -38,6 +42,24 @@ router.post(
       response.status(201).json({
         status: 201,
         data: newProduct,
+        accessToken: request.accessToken,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
+
+router.delete(
+  "/:id",
+  authenticateUser,
+  allowAdminOnly,
+  async (request, response, next) => {
+    try {
+      const product = await deleteProduct(request.params.id);
+      response.status(201).json({
+        status: 201,
+        data: product,
         accessToken: request.accessToken,
       });
     } catch (error) {
