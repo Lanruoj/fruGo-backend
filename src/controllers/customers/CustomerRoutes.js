@@ -133,7 +133,10 @@ router.post(
   allowOwnerOrAdmin,
   async (request, response, next) => {
     try {
-      const updatedCart = await addToCart(request.params.id, request.product);
+      const updatedCart = await addToCart(
+        request.params.id,
+        request.body.product
+      );
       response.status(200).json({
         status: 200,
         cart: updatedCart,
