@@ -12,7 +12,11 @@ const {
   allowOwnerOrAdmin,
 } = require("../auth/authMiddleware");
 const { filterCollection } = require("../helpers");
-const { getCartByCustomerID, addToCart } = require("../carts/CartHelpers");
+const {
+  getCartByCustomerID,
+  addToCart,
+  removeFromCart,
+} = require("../carts/CartHelpers");
 const { loginUser } = require("../auth/authHelpers");
 
 // Register a new customer
@@ -123,13 +127,37 @@ router.get(
   }
 );
 
-router.put(
-  "/:id/cart",
+router.post(
+  "/:id/cart/products",
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
     try {
-      const updatedCart = await addToCart(request.params.id, request.product);
+      const updatedCart = await addToCart(
+        request.params.id,
+        request.body.product
+      );
+      response.status(200).json({
+        status: 200,
+        cart: updatedCart,
+        accessToken: request.accessToken,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
+
+router.delete(
+  "/:id/cart/products",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    try {
+      const updatedCart = await removeFromCart(
+        request.params.id,
+        request.body.product
+      );
       response.status(200).json({
         status: 200,
         cart: updatedCart,
