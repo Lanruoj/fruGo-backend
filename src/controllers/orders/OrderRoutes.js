@@ -1,6 +1,7 @@
 const express = require("express");
 const router = express.Router();
 const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
+const { filterCollection } = require("../helpers");
 const { getAllOrders, getOrderByID } = require("./OrderHelpers");
 
 router.get(
