@@ -13,11 +13,24 @@ async function getAllOrders() {
     return orders;
   } catch (error) {
     console.log(error);
-    throw {
-      message: ": : Order not found",
-      status: 404,
-    };
+    throw error;
   }
 }
 
-module.exports = { getAllOrders };
+async function getOrderByID(orderID) {
+  try {
+    const order = await Order.findById(orderID).exec();
+    if (!order) {
+      const error = new Error();
+      error.message = `: : No order found [${orderID}]`;
+      error.status = 404;
+      throw error;
+    }
+    return order;
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
+module.exports = { getAllOrders, getOrderByID };
