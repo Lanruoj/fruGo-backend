@@ -18,7 +18,7 @@ const {
   removeFromCart,
 } = require("../carts/CartHelpers");
 const { loginUser } = require("../auth/authHelpers");
-const { getAllOrdersByCustomerID } = require("../orders/OrderHelpers");
+const { getOrdersByCustomerID } = require("../orders/OrderHelpers");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
@@ -176,7 +176,10 @@ router.get(
   allowOwnerOrAdmin,
   async (request, response, next) => {
     try {
-      const result = await getAllOrdersByCustomerID(request.params.id);
+      const result = await getOrdersByCustomerID(
+        request.params.id,
+        request.query.status
+      );
       response.status(200).json({
         status: 200,
         data: result,
