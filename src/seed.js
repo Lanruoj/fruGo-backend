@@ -223,10 +223,18 @@ async function seedDatabase() {
         { $push: { stock: { $each: createdStockProducts } } }
       );
       // Seed carts
+      let cartProducts = [];
+      for ([index, stockProduct] of createdStockProducts.entries()) {
+        let cartProduct = {
+          _stockProduct: stockProduct._id,
+          subQuantity: 11,
+        };
+        cartProducts.push(cartProduct);
+      }
       for ([index, cart] of carts.entries()) {
         cart._customer = createdCustomers[index];
         cart._merchant = createdMerchants[index];
-        cart.products = createdStockProducts;
+        cart.products = cartProducts;
       }
       const createdCarts = await Cart.insertMany(carts);
       // Seed orders
@@ -254,7 +262,7 @@ async function seedDatabase() {
 
       console.log("Database seeded & disconnected");
     })
-    .catch(() => console.log("Error: Database could not be seeded"));
+    .catch((error) => console.log(error));
 }
 
 if (process.env.SEED == "true") seedDatabase();
