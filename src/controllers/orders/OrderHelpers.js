@@ -35,7 +35,7 @@ async function getOrderByID(orderID) {
   }
 }
 
-async function getAllOrdersByCustomerID(customerID, status) {
+async function getAllOrdersByCustomerID(customerID) {
   return await Customer.findById(customerID)
     .populate({
       path: "orders",
