@@ -7,7 +7,7 @@ const OrderSchema = new mongoose.Schema(
       ref: "Cart",
       required: true,
     },
-    _status: {
+    status: {
       type: String,
       default: "pending",
       enum: ["pending", "complete", "cancelled"],
