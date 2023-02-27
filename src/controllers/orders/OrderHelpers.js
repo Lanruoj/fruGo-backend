@@ -52,4 +52,26 @@ async function getAllOrdersByCustomerID(customerID) {
     .exec();
 }
 
-module.exports = { getAllOrders, getOrderByID, getAllOrdersByCustomerID };
+async function getOrdersByCustomerID(customerID, status) {
+  let customer = await Customer.findById(customerID)
+    .populate({
+      path: "orders",
+      populate: {
+        path: "_cart",
+        model: "Cart",
+        populate: {
+          path: "products",
+          model: "StockProduct",
+          populate: { path: "_product", model: "Product" },
+        },
+      },
+    })
+    .exec();
+  let orders = customer.orders;
+  if (status) {
+    orders = orders.filter((order) => order.status == status);
+  }
+  return orders;
+}
+
+module.exports = { getAllOrders, getOrderByID, getOrdersByCustomerID };
