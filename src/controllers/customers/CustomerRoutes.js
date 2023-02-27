@@ -176,10 +176,7 @@ router.get(
   allowOwnerOrAdmin,
   async (request, response, next) => {
     try {
-      const result = await getAllOrdersByCustomerID(
-        request.user,
-        request.query.status
-      );
+      const result = await getAllOrdersByCustomerID(request.params.id);
       response.status(200).json({
         status: 200,
         data: result,
