@@ -18,6 +18,7 @@ const {
   removeFromCart,
 } = require("../carts/CartHelpers");
 const { loginUser } = require("../auth/authHelpers");
+const { getAllOrdersByCustomerID } = require("../orders/OrderHelpers");
 
 // Register a new customer
 router.post("/register", async (request, response, next) => {
@@ -161,6 +162,27 @@ router.delete(
       response.status(200).json({
         status: 200,
         cart: updatedCart,
+        accessToken: request.accessToken,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
+
+router.get(
+  "/:id/orders/",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    try {
+      const result = await getAllOrdersByCustomerID(
+        request.user,
+        request.query.status
+      );
+      response.status(200).json({
+        status: 200,
+        data: result,
         accessToken: request.accessToken,
       });
     } catch (error) {
