@@ -1,7 +1,5 @@
 const { Order } = require("../../models/Order");
-const { Cart } = require("../../models/Cart");
 const { Customer } = require("../../models/Customer");
-const { filterCollection } = require("../helpers");
 
 async function getAllOrders() {
   try {
@@ -33,23 +31,6 @@ async function getOrderByID(orderID) {
     console.log(error);
     throw error;
   }
-}
-
-async function getAllOrdersByCustomerID(customerID) {
-  return await Customer.findById(customerID)
-    .populate({
-      path: "orders",
-      populate: {
-        path: "_cart",
-        model: "Cart",
-        populate: {
-          path: "products",
-          model: "StockProduct",
-          populate: { path: "_product", model: "Product" },
-        },
-      },
-    })
-    .exec();
 }
 
 async function getOrdersByCustomerID(customerID, status) {
