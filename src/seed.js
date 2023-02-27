@@ -232,8 +232,15 @@ async function seedDatabase() {
       // Seed orders
       for ([index, order] of orders.entries()) {
         order._cart = createdCarts[index];
+        const createdOrder = await Order.create(order);
+        await Customer.findByIdAndUpdate(
+          order._cart._customer._id,
+          {
+            $push: { orders: createdOrder },
+          },
+          { returnDocument: "after" }
+        );
       }
-      const createdOrders = await Order.insertMany(orders);
     })
     .then(async () => {
       await mongoose.connection.close();

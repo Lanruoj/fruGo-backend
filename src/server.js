@@ -74,6 +74,7 @@ app.use("/auth", require("./controllers/auth/authRoutes"));
 app.use("/customers", require("./controllers/customers/CustomerRoutes"));
 app.use("/merchants", require("./controllers/merchants/MerchantRoutes"));
 app.use("/products", require("./controllers/products/ProductRoutes"));
+app.use("/orders", require("./controllers/orders/OrderRoutes"));
 
 app.get("/", (request, response) => {
   response.status(200).json({
