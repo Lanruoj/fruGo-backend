@@ -1,5 +1,6 @@
 const { Order } = require("../../models/Order");
 const { Customer } = require("../../models/Customer");
+const { Merchant } = require("../../models/Merchant");
 
 async function getAllOrders() {
   try {
@@ -55,4 +56,31 @@ async function getOrdersByCustomerID(customerID, status) {
   return orders;
 }
 
-module.exports = { getAllOrders, getOrderByID, getOrdersByCustomerID };
+async function getOrdersByMerchantID(merchantID, status) {
+  let merchant = await Merchant.findById(merchantID)
+    .populate({
+      path: "orders",
+      populate: {
+        path: "_cart",
+        model: "Cart",
+        populate: {
+          path: "products",
+          model: "StockProduct",
+          populate: { path: "_product", model: "Product" },
+        },
+      },
+    })
+    .exec();
+  let orders = merchant.orders;
+  if (status) {
+    orders = orders.filter((order) => order.status == status);
+  }
+  return orders;
+}
+
+module.exports = {
+  getAllOrders,
+  getOrderByID,
+  getOrdersByCustomerID,
+  getOrdersByMerchantID,
+};
