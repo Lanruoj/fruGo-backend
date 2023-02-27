@@ -1,6 +1,7 @@
 const { Order } = require("../../models/Order");
 const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
+const { Cart } = require("../../models/Cart");
 
 async function getAllOrders() {
   try {
@@ -78,9 +79,34 @@ async function getOrdersByMerchantID(merchantID, status) {
   return orders;
 }
 
+async function createOrder(customerID) {
+  const cart = await Cart.findOne({ _customer: customerID })
+    .populate({
+      path: "products",
+      populate: {
+        path: "_stockProduct",
+        model: "StockProduct",
+        populate: { path: "_product", model: "Product" },
+      },
+    })
+    .exec();
+  let totalPrice = 0;
+  let cartProducts = [];
+  for (let cartProduct of cart.products) {
+    totalPrice +=
+      cartProduct.subQuantity * cartProduct._stockProduct._product.price;
+    cartProducts.push(cartProduct);
+  }
+  cart.totalPrice = totalPrice;
+  cart.save();
+  const order = await Order.create({ _cart: cart });
+  return order;
+}
+
 module.exports = {
   getAllOrders,
   getOrderByID,
   getOrdersByCustomerID,
   getOrdersByMerchantID,
+  createOrder,
 };
