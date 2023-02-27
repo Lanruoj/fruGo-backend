@@ -74,7 +74,7 @@ async function filterCollection(model, queryString) {
   const results = await mongoose.model(model).find(queryObject).exec();
   if (!results.length) {
     throw {
-      message: ": : No customers found matching that criteria",
+      message: ": : No results found matching that criteria",
       status: 404,
     };
   }

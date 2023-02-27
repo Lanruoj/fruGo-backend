@@ -16,6 +16,7 @@ const {
   allowOwnerOrAdmin,
 } = require("../auth/authMiddleware");
 const { parseJWT } = require("../helpers");
+const { getOrdersByMerchantID } = require("../orders/OrderHelpers");
 
 router.post(
   "/register",
@@ -149,6 +150,27 @@ router.delete(
   async (request, response, next) => {
     try {
       const result = await removeStockProduct(request.body.stockProduct);
+      response.status(200).json({
+        status: 200,
+        data: result,
+        accessToken: request.accessToken,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
+
+router.get(
+  "/:id/orders/",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    try {
+      const result = await getOrdersByMerchantID(
+        request.params.id,
+        request.query.status
+      );
       response.status(200).json({
         status: 200,
         data: result,

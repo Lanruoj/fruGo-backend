@@ -240,6 +240,13 @@ async function seedDatabase() {
           },
           { returnDocument: "after" }
         );
+        await Merchant.findByIdAndUpdate(
+          order._cart._merchant._id,
+          {
+            $push: { orders: createdOrder },
+          },
+          { returnDocument: "after" }
+        );
       }
     })
     .then(async () => {
