@@ -3,6 +3,8 @@ const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
 const { Cart } = require("../../models/Cart");
 const { createCart } = require("../carts/CartHelpers");
+const { updateStockQuantity } = require("../merchants/MerchantHelpers");
+const { getCustomersMerchant } = require("../customers/CustomerHelpers");
 
 async function getAllOrders() {
   try {
@@ -45,13 +47,13 @@ async function getOrdersByCustomerID(customerID, status) {
         model: "Cart",
         populate: {
           path: "products",
-          model: "StockProduct",
           populate: { path: "_product", model: "Product" },
         },
       },
     })
     .exec();
   let orders = customer.orders;
+  console.log(orders);
   if (status) {
     orders = orders.filter((order) => order.status == status);
   }
@@ -81,13 +83,29 @@ async function getOrdersByMerchantID(merchantID, status) {
 }
 
 async function createOrder(customerID) {
-  const cart = await Cart.findOne({ _customer: customerID }).exec();
+  const cart = await Cart.findOne({ _customer: customerID })
+    .populate({
+      path: "products",
+      populate: {
+        path: "_stockProduct",
+        model: "StockProduct",
+        populate: { path: "_product", model: "Product" },
+      },
+    })
+    .exec();
   if (!cart.products.length) {
     const error = new Error();
     error.message = ": : Cart is empty";
     error.status = 400;
     throw error;
   }
+  for (cartProduct of cart.products) {
+    await updateStockQuantity({
+      stockProduct: cartProduct._stockProduct._id,
+      quantity: cartProduct._stockProduct.quantity - cartProduct.subQuantity,
+    });
+  }
+
   const order = await Order.create({ _cart: cart });
   await Cart.findOneAndDelete({ _customer: customerID }).exec();
   await createCart(customerID);
