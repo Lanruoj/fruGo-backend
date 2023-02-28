@@ -16,6 +16,7 @@ const {
   getCartByCustomerID,
   addToCart,
   removeFromCart,
+  updateCartProductQuantity,
 } = require("../carts/CartHelpers");
 const { loginUser } = require("../auth/authHelpers");
 const { getOrdersByCustomerID } = require("../orders/OrderHelpers");
@@ -137,6 +138,28 @@ router.post(
       const updatedCart = await addToCart(
         request.params.id,
         request.body.product
+      );
+      response.status(200).json({
+        status: 200,
+        cart: updatedCart,
+        accessToken: request.accessToken,
+      });
+    } catch (error) {
+      return next(error);
+    }
+  }
+);
+
+router.put(
+  "/:id/cart/products",
+  authenticateUser,
+  allowOwnerOrAdmin,
+  async (request, response, next) => {
+    try {
+      const updatedCart = await updateCartProductQuantity(
+        request.params.id,
+        request.body.product,
+        request.body.quantity
       );
       response.status(200).json({
         status: 200,
