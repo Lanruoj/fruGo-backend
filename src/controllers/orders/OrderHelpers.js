@@ -117,10 +117,25 @@ async function createOrder(customerID) {
   return order;
 }
 
+async function updateOrder(updateData) {
+  const { id, data } = updateData;
+  try {
+    return await Order.findByIdAndUpdate(id, data, {
+      returnDocument: "after",
+    })
+      .lean()
+      .exec();
+  } catch (err) {
+    console.log(err);
+    throw { message: ": : Order could not be found", status: 400 };
+  }
+}
+
 module.exports = {
   getAllOrders,
   getOrderByID,
   getOrdersByCustomerID,
   getOrdersByMerchantID,
   createOrder,
+  updateOrder,
 };
