@@ -89,7 +89,7 @@ router.put(
       });
       response.status(200).json({
         status: 200,
-        updates: result.updatedFields,
+        message: "Customer updated",
         accessToken: request.accessToken,
       });
     } catch (error) {

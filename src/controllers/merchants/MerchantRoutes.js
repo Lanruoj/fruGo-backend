@@ -110,7 +110,7 @@ router.put(
       });
       response.status(200).json({
         status: 200,
-        data: result,
+        message: "Merchant updated",
         accessToken: request.accessToken,
       });
     } catch (error) {

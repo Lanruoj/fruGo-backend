@@ -63,7 +63,7 @@ router.put(
       });
       response.status(200).json({
         status: 200,
-        data: product,
+        message: "Product updated",
         accessToken: request.accessToken,
       });
     } catch (error) {
