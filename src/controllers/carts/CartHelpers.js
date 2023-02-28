@@ -68,6 +68,37 @@ async function addToCart(customerID, stockProductID) {
   }
 }
 
+async function updateCartProductQuantity(customerID, stockProductID, quantity) {
+  try {
+    const cart = await Cart.findOneAndUpdate(
+      {
+        _customer: customerID,
+        "products._stockProduct": stockProductID,
+      },
+      {
+        $set: {
+          "products.$.subQuantity": quantity,
+        },
+      },
+      { returnDocument: "after" }
+    )
+      .populate({
+        path: "products",
+        populate: {
+          path: "_stockProduct",
+          model: "StockProduct",
+          populate: { path: "_product", model: "Product" },
+        },
+      })
+      .exec();
+    return cart;
+  } catch (error) {
+    console.log(error);
+    error.status = 400;
+    throw error;
+  }
+}
+
 async function removeFromCart(customerID, stockProductID) {
   try {
     const cart = await Cart.findOneAndUpdate(
@@ -88,4 +119,10 @@ async function removeFromCart(customerID, stockProductID) {
   }
 }
 
-module.exports = { getCartByCustomerID, createCart, addToCart, removeFromCart };
+module.exports = {
+  getCartByCustomerID,
+  createCart,
+  addToCart,
+  removeFromCart,
+  updateCartProductQuantity,
+};
