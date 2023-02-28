@@ -105,7 +105,6 @@ router.put(
   async (request, response, next) => {
     try {
       const result = await updateStockQuantity({
-        _merchant: request.params.id,
         stockProduct: request.body.stockProduct,
         quantity: request.body.quantity,
       });
