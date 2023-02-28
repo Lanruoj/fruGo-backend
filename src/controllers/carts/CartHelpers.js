@@ -40,13 +40,24 @@ async function createCart(customerID) {
 async function addToCart(customerID, stockProductID) {
   try {
     const cart = await Cart.findOneAndUpdate(
-      { _customer: customerID },
-      { $addToSet: { products: stockProductID } },
+      {
+        _customer: customerID,
+        "products._stockProduct": { $ne: stockProductID },
+      },
+      {
+        $addToSet: {
+          products: { _stockProduct: stockProductID },
+        },
+      },
       { returnDocument: "after" }
     )
       .populate({
         path: "products",
-        populate: { path: "_product", model: "Product" },
+        populate: {
+          path: "_stockProduct",
+          model: "StockProduct",
+          populate: { path: "_product", model: "Product" },
+        },
       })
       .exec();
     return cart;
@@ -61,7 +72,7 @@ async function removeFromCart(customerID, stockProductID) {
   try {
     const cart = await Cart.findOneAndUpdate(
       { _customer: customerID },
-      { $pull: { products: stockProductID } },
+      { $pull: { products: { _stockProduct: stockProductID } } },
       { returnDocument: "after" }
     )
       .populate({
