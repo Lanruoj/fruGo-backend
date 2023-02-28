@@ -1,6 +1,7 @@
 const { Customer } = require("../../models/Customer");
 const { Cart } = require("../../models/Cart");
 const { Merchant } = require("../../models/Merchant");
+const { StockProduct } = require("../../models/StockProduct");
 
 async function getCartByCustomerID(customerID) {
   try {
@@ -70,6 +71,16 @@ async function addToCart(customerID, stockProductID) {
 
 async function updateCartProductQuantity(customerID, stockProductID, quantity) {
   try {
+    const stockProduct = await StockProduct.findById(stockProductID)
+      .populate({ path: "_product", model: "Product" })
+      .exec();
+    if (stockProduct.quantity < quantity) {
+      const error = new Error();
+      error.message = `: : Only ${stockProduct.quantity} ${
+        stockProduct._product.name.toLowerCase() + "s"
+      } in stock`;
+      throw error;
+    }
     const cart = await Cart.findOneAndUpdate(
       {
         _customer: customerID,
