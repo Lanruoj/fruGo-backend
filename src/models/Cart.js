@@ -12,7 +12,7 @@ const CartSchema = new mongoose.Schema(
       ref: "Merchant",
       required: true,
     },
-    products: [
+    _cartProducts: [
       {
         _stockProduct: {
           type: mongoose.Schema.Types.ObjectId,
@@ -31,7 +31,7 @@ const CartSchema = new mongoose.Schema(
 
 CartSchema.pre("findOne", function (next) {
   this.populate({
-    path: "products",
+    path: "_cartProducts",
     populate: {
       path: "_stockProduct",
       model: "StockProduct",
@@ -43,7 +43,7 @@ CartSchema.pre("findOne", function (next) {
 
 CartSchema.virtual("totalPrice").get(function () {
   let totalPrice = 0;
-  for (let cartProduct of this.products) {
+  for (let cartProduct of this._cartProducts) {
     totalPrice +=
       cartProduct.subQuantity * cartProduct._stockProduct._product.price;
   }
