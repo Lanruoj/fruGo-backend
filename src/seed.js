@@ -108,25 +108,25 @@ const products = [
   {
     name: "Almond",
     type: "Nuts",
-    price: 0.1,
+    price: 4,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
   {
     name: "Cashews",
     type: "Nuts",
-    price: 0.1,
+    price: 8,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
   {
     name: "Peanuts",
     type: "Nuts",
-    price: 0.1,
+    price: 5,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
   {
     name: "Walnuts",
     type: "Nuts",
-    price: 0.1,
+    price: 11,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
 ];
@@ -145,7 +145,7 @@ const stockProducts = [
   {
     _merchant: null,
     _product: null,
-    quantity: 0,
+    quantity: 103,
   },
 ];
 
@@ -245,7 +245,7 @@ async function seedDatabase() {
       for ([index, stockProduct] of createdStockProducts.entries()) {
         let cartProduct = {
           _stockProduct: stockProduct._id,
-          subQuantity: 11,
+          subQuantity: Math.floor(Math.random() * 20),
         };
         cartProducts.push(cartProduct);
       }
