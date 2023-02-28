@@ -80,25 +80,7 @@ async function getOrdersByMerchantID(merchantID, status) {
 }
 
 async function createOrder(customerID) {
-  const cart = await Cart.findOne({ _customer: customerID })
-    .populate({
-      path: "products",
-      populate: {
-        path: "_stockProduct",
-        model: "StockProduct",
-        populate: { path: "_product", model: "Product" },
-      },
-    })
-    .exec();
-  let totalPrice = 0;
-  let cartProducts = [];
-  for (let cartProduct of cart.products) {
-    totalPrice +=
-      cartProduct.subQuantity * cartProduct._stockProduct._product.price;
-    cartProducts.push(cartProduct);
-  }
-  cart.totalPrice = totalPrice;
-  cart.save();
+  const cart = await Cart.findOne({ _customer: customerID }).exec();
   const order = await Order.create({ _cart: cart });
   return order;
 }
