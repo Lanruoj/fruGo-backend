@@ -2,6 +2,7 @@ const { Order } = require("../../models/Order");
 const { Customer } = require("../../models/Customer");
 const { Merchant } = require("../../models/Merchant");
 const { Cart } = require("../../models/Cart");
+const { createCart } = require("../carts/CartHelpers");
 
 async function getAllOrders() {
   try {
@@ -81,7 +82,15 @@ async function getOrdersByMerchantID(merchantID, status) {
 
 async function createOrder(customerID) {
   const cart = await Cart.findOne({ _customer: customerID }).exec();
+  if (!cart.products.length) {
+    const error = new Error();
+    error.message = ": : Cart is empty";
+    error.status = 400;
+    throw error;
+  }
   const order = await Order.create({ _cart: cart });
+  await Cart.findOneAndDelete({ _customer: customerID }).exec();
+  await createCart(customerID);
   return order;
 }
 
