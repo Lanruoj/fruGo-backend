@@ -111,6 +111,24 @@ const products = [
     price: 0.1,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
+  {
+    name: "Cashews",
+    type: "Nuts",
+    price: 0.1,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Peanuts",
+    type: "Nuts",
+    price: 0.1,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Walnuts",
+    type: "Nuts",
+    price: 0.1,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
 ];
 
 const stockProducts = [
@@ -213,7 +231,7 @@ async function seedDatabase() {
       const createdProducts = await Product.insertMany(products);
       // Seed stock products
       for ([index, stockProduct] of stockProducts.entries()) {
-        stockProduct._merchant = createdMerchants[index];
+        stockProduct._merchant = createdMerchants[0];
         stockProduct._product = createdProducts[index];
       }
       const createdStockProducts = await StockProduct.insertMany(stockProducts);
@@ -223,10 +241,18 @@ async function seedDatabase() {
         { $push: { stock: { $each: createdStockProducts } } }
       );
       // Seed carts
+      let cartProducts = [];
+      for ([index, stockProduct] of createdStockProducts.entries()) {
+        let cartProduct = {
+          _stockProduct: stockProduct._id,
+          subQuantity: 11,
+        };
+        cartProducts.push(cartProduct);
+      }
       for ([index, cart] of carts.entries()) {
         cart._customer = createdCustomers[index];
         cart._merchant = createdMerchants[index];
-        cart.products = createdStockProducts;
+        cart.products = cartProducts;
       }
       const createdCarts = await Cart.insertMany(carts);
       // Seed orders
@@ -254,7 +280,7 @@ async function seedDatabase() {
 
       console.log("Database seeded & disconnected");
     })
-    .catch(() => console.log("Error: Database could not be seeded"));
+    .catch((error) => console.log(error));
 }
 
 if (process.env.SEED == "true") seedDatabase();
