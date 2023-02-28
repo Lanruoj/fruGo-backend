@@ -1,6 +1,7 @@
 const { omit } = require("underscore");
 const { Customer } = require("../../models/Customer");
 const { City } = require("../../models/City");
+const { Merchant } = require("../../models/Merchant");
 
 async function createCustomer(data) {
   try {
@@ -69,9 +70,15 @@ async function deleteCustomer(customerID) {
   return await Customer.findByIdAndDelete(customerID).exec();
 }
 
+async function getCustomersMerchant(customerID) {
+  const customer = await Customer.findById(customerID).exec();
+  return await Merchant.findOne({ _city: customer._city });
+}
+
 module.exports = {
   createCustomer,
   getCustomerByID,
   updateCustomer,
   deleteCustomer,
+  getCustomersMerchant,
 };

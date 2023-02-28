@@ -1,13 +1,14 @@
 const { Customer } = require("../../models/Customer");
 const { Cart } = require("../../models/Cart");
 const { Merchant } = require("../../models/Merchant");
+const { StockProduct } = require("../../models/StockProduct");
 
 async function getCartByCustomerID(customerID) {
   try {
     const cart = await Cart.findOne({ _customer: customerID })
       .populate({
-        path: "products",
-        populate: { path: "_product", model: "Product" },
+        path: "_cartProducts",
+        populate: { path: "_stockProduct", model: "StockProduct" },
       })
       .exec();
     return cart;
@@ -42,17 +43,17 @@ async function addToCart(customerID, stockProductID) {
     const cart = await Cart.findOneAndUpdate(
       {
         _customer: customerID,
-        "products._stockProduct": { $ne: stockProductID },
+        "_cartProducts._stockProduct": { $ne: stockProductID },
       },
       {
         $addToSet: {
-          products: { _stockProduct: stockProductID },
+          _cartProducts: { _stockProduct: stockProductID },
         },
       },
       { returnDocument: "after" }
     )
       .populate({
-        path: "products",
+        path: "_cartProducts",
         populate: {
           path: "_stockProduct",
           model: "StockProduct",
@@ -70,20 +71,30 @@ async function addToCart(customerID, stockProductID) {
 
 async function updateCartProductQuantity(customerID, stockProductID, quantity) {
   try {
+    const stockProduct = await StockProduct.findById(stockProductID)
+      .populate({ path: "_product", model: "Product" })
+      .exec();
+    if (stockProduct.quantity < quantity || quantity < 1) {
+      const error = new Error();
+      error.message = `: : Only ${stockProduct.quantity} ${
+        stockProduct._product.name.toLowerCase() + "s"
+      } in stock`;
+      throw error;
+    }
     const cart = await Cart.findOneAndUpdate(
       {
         _customer: customerID,
-        "products._stockProduct": stockProductID,
+        "_cartProducts._stockProduct": stockProductID,
       },
       {
         $set: {
-          "products.$.subQuantity": quantity,
+          "_cartProducts.$.subQuantity": quantity,
         },
       },
       { returnDocument: "after" }
     )
       .populate({
-        path: "products",
+        path: "_cartProducts",
         populate: {
           path: "_stockProduct",
           model: "StockProduct",
@@ -107,7 +118,7 @@ async function removeFromCart(customerID, stockProductID) {
       { returnDocument: "after" }
     )
       .populate({
-        path: "products",
+        path: "_cartProducts",
         populate: {
           path: "_stockProduct",
           model: "StockProduct",
@@ -123,10 +134,23 @@ async function removeFromCart(customerID, stockProductID) {
   }
 }
 
+async function clearCart(customerID) {
+  try {
+    const cart = await Cart.findOneAndUpdate(
+      { _customer: customerID },
+      { $set: { _cartProducts: [] } }
+    );
+  } catch (error) {
+    console.log(error);
+    throw error;
+  }
+}
+
 module.exports = {
   getCartByCustomerID,
   createCart,
   addToCart,
   removeFromCart,
   updateCartProductQuantity,
+  clearCart,
 };

@@ -2,11 +2,12 @@ const mongoose = require("mongoose");
 
 const OrderSchema = new mongoose.Schema(
   {
-    _cart: {
-      type: mongoose.Schema.Types.ObjectId,
-      ref: "Cart",
-      required: true,
-    },
+    _customer: { type: mongoose.Schema.Types.ObjectId, ref: "Customer" },
+    _merchant: { type: mongoose.Schema.Types.ObjectId, ref: "Merchant" },
+    _orderProducts: [
+      { type: mongoose.Schema.Types.ObjectId, ref: "StockProduct" },
+    ],
+    totalPrice: { type: Number },
     status: {
       type: String,
       default: "pending",

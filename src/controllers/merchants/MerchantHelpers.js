@@ -83,11 +83,11 @@ async function updateMerchant(updateData) {
 }
 
 async function updateStockQuantity(updateData) {
-  let { _merchant, quantity } = updateData;
+  let { stockProduct, quantity } = updateData;
   let originalStockProduct;
   try {
     originalStockProduct = await StockProduct.findOneAndUpdate(
-      { _merchant: _merchant },
+      { _id: stockProduct },
       {
         quantity: quantity,
       },
@@ -100,9 +100,7 @@ async function updateStockQuantity(updateData) {
   } catch (err) {
     throw { message: ": : Merchant could not be found", status: 400 };
   }
-  const updatedStockProduct = await StockProduct.findOne({
-    _merchant: _merchant,
-  })
+  const updatedStockProduct = await StockProduct.findOne({ _id: stockProduct })
     .lean()
     .exec();
   const updatedFields = omit(updatedStockProduct, (value, field) => {
@@ -111,9 +109,6 @@ async function updateStockQuantity(updateData) {
   // MAY NOT NEED... /////////////////////////////////////////////
   if (!Object.keys(updatedFields).length) {
     throw { message: ": : No updates specified", status: 400 };
-  }
-  if (updatedFields.password) {
-    updatedFields.password = "Password updated";
   }
   return {
     updatedStockProduct: updatedStockProduct,

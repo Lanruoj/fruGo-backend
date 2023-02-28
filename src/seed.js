@@ -61,7 +61,7 @@ const admin = {
 
 const merchants = [
   {
-    email: "melbourne_merchant@email.com",
+    email: "melbourne@email.com",
     password: null,
     username: "melbourne_merchant",
     name: "Melbourne Merchant",
@@ -71,7 +71,7 @@ const merchants = [
     stock: [],
   },
   {
-    email: "sydney_merchant@email.com",
+    email: "sydney@email.com",
     password: null,
     username: "sydney_merchant",
     name: "Sydney Merchant",
@@ -81,11 +81,51 @@ const merchants = [
     stock: [],
   },
   {
-    email: "brisbane_merchant@email.com",
+    email: "canberra@email.com",
     password: null,
-    username: "brisbane_merchant",
-    name: "Brisbane Merchant",
+    username: "canberra_merchant",
+    name: "Canberra Merchant",
+    description: "The best merchant in all of Canberra",
+    streetAddress: "1234 Merchant street",
+    _city: null,
+    stock: [],
+  },
+  {
+    email: "darwin@email.com",
+    password: null,
+    username: "darwin_merchant",
+    name: "Darwin Merchant",
+    description: "The best merchant in all of Darwin",
+    streetAddress: "1234 Merchant street",
+    _city: null,
+    stock: [],
+  },
+  {
+    email: "perth@email.com",
+    password: null,
+    username: "perth_merchant",
+    name: "Perth Merchant",
     description: "The best merchant in all of Brisbane",
+    streetAddress: "1234 Merchant street",
+    _city: null,
+    stock: [],
+  },
+  {
+    email: "adelaide@email.com",
+    password: null,
+    username: "adelaide_merchant",
+    name: "Adelaide Merchant",
+    description: "The best merchant in all of Adelaide",
+    streetAddress: "1234 Merchant street",
+    _city: null,
+    stock: [],
+  },
+  {
+    email: "hobart@email.com",
+    password: null,
+    username: "hobart_merchant",
+    name: "Hobart Merchant",
+    description: "The best merchant in all of Hobart",
     streetAddress: "1234 Merchant street",
     _city: null,
     stock: [],
@@ -108,25 +148,25 @@ const products = [
   {
     name: "Almond",
     type: "Nuts",
-    price: 0.1,
+    price: 4,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
   {
     name: "Cashews",
     type: "Nuts",
-    price: 0.1,
+    price: 8,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
   {
     name: "Peanuts",
     type: "Nuts",
-    price: 0.1,
+    price: 5,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
   {
     name: "Walnuts",
     type: "Nuts",
-    price: 0.1,
+    price: 11,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
 ];
@@ -145,7 +185,7 @@ const stockProducts = [
   {
     _merchant: null,
     _product: null,
-    quantity: 0,
+    quantity: 103,
   },
 ];
 
@@ -166,15 +206,19 @@ const carts = [
 
 const orders = [
   {
-    _cart: null,
+    _customer: null,
+    _merchant: null,
+    _products: [],
   },
   {
-    _cart: null,
-    status: "complete",
+    _customer: null,
+    _merchant: null,
+    _products: [],
   },
   {
-    _cart: null,
-    status: "cancelled",
+    _customer: null,
+    _merchant: null,
+    _products: [],
   },
 ];
 
@@ -215,7 +259,7 @@ async function seedDatabase() {
       // Hash each password & assign a city to each customer
       for ([index, customer] of customers.entries()) {
         customer.password = await hashString(process.env.USER_SEED_PASSWORD);
-        customer._city = createdCities[index];
+        customer._city = createdCities[index]._id;
       }
       const createdCustomers = await Customer.insertMany(customers);
       // Seed admin
@@ -224,15 +268,15 @@ async function seedDatabase() {
       // Seed merchants
       for ([index, merchant] of merchants.entries()) {
         merchant.password = await hashString(process.env.USER_SEED_PASSWORD);
-        merchant._city = createdCities[index];
+        merchant._city = createdCities[index]._id;
       }
       const createdMerchants = await Merchant.insertMany(merchants);
       // Seed products
       const createdProducts = await Product.insertMany(products);
       // Seed stock products
       for ([index, stockProduct] of stockProducts.entries()) {
-        stockProduct._merchant = createdMerchants[0];
-        stockProduct._product = createdProducts[index];
+        stockProduct._merchant = createdMerchants[0]._id;
+        stockProduct._product = createdProducts[index]._id;
       }
       const createdStockProducts = await StockProduct.insertMany(stockProducts);
       // Insert stock products into merchants
@@ -245,29 +289,32 @@ async function seedDatabase() {
       for ([index, stockProduct] of createdStockProducts.entries()) {
         let cartProduct = {
           _stockProduct: stockProduct._id,
-          subQuantity: 11,
+          subQuantity: Math.floor(Math.random() * 20),
         };
         cartProducts.push(cartProduct);
       }
-      for ([index, cart] of carts.entries()) {
-        cart._customer = createdCustomers[index];
-        cart._merchant = createdMerchants[index];
-        cart.products = cartProducts;
-      }
-      const createdCarts = await Cart.insertMany(carts);
+      const createdCart = await Cart.create({
+        _customer: createdCustomers[0]._id,
+        _merchant: createdMerchants[0]._id,
+        _cartProducts: cartProducts,
+      });
       // Seed orders
       for ([index, order] of orders.entries()) {
-        order._cart = createdCarts[index];
-        const createdOrder = await Order.create(order);
+        // console.log(`createdCustomers[0]._id : ${createdCustomers[0]._id}`);
+        order._customer = createdCustomers[0];
+        order._merchant = createdMerchants[0];
+        order._orderProducts = createdCart._cartProducts;
+        // console.log(order);
+        const createdOrder = await Order.insertMany(order);
         await Customer.findByIdAndUpdate(
-          order._cart._customer._id,
+          createdOrder._customer,
           {
             $push: { orders: createdOrder },
           },
           { returnDocument: "after" }
         );
         await Merchant.findByIdAndUpdate(
-          order._cart._merchant._id,
+          createdOrder._customer_merchant,
           {
             $push: { orders: createdOrder },
           },
