@@ -41,13 +41,13 @@ CartSchema.pre("findOne", function (next) {
   next();
 });
 
-CartSchema.virtual("subTotal").get(function () {
-  let subTotal = 0;
+CartSchema.virtual("totalPrice").get(function () {
+  let totalPrice = 0;
   for (let cartProduct of this.products) {
-    subTotal +=
+    totalPrice +=
       cartProduct.subQuantity * cartProduct._stockProduct._product.price;
   }
-  return subTotal;
+  return totalPrice;
 });
 
 const Cart = mongoose.model("Cart", CartSchema);
