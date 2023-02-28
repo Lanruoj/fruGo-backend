@@ -108,7 +108,11 @@ async function removeFromCart(customerID, stockProductID) {
     )
       .populate({
         path: "products",
-        populate: { path: "_product", model: "Product" },
+        populate: {
+          path: "_stockProduct",
+          model: "StockProduct",
+          populate: { path: "_product", model: "Product" },
+        },
       })
       .exec();
     return cart;
