@@ -111,6 +111,24 @@ const products = [
     price: 0.1,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
+  {
+    name: "Cashews",
+    type: "Nuts",
+    price: 0.1,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Peanuts",
+    type: "Nuts",
+    price: 0.1,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Walnuts",
+    type: "Nuts",
+    price: 0.1,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
 ];
 
 const stockProducts = [
@@ -213,7 +231,7 @@ async function seedDatabase() {
       const createdProducts = await Product.insertMany(products);
       // Seed stock products
       for ([index, stockProduct] of stockProducts.entries()) {
-        stockProduct._merchant = createdMerchants[index];
+        stockProduct._merchant = createdMerchants[0];
         stockProduct._product = createdProducts[index];
       }
       const createdStockProducts = await StockProduct.insertMany(stockProducts);
