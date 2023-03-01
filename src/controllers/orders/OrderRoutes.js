@@ -43,6 +43,7 @@ router.post("/", authenticateUser, async (request, response, next) => {
     const result = await createOrder(request.user);
     response.status(200).json({
       status: 200,
+      message: "Order created",
       data: result,
     });
   } catch (error) {
@@ -59,6 +60,7 @@ router.put("/:id", authenticateUser, async (request, response, next) => {
     response.status(200).json({
       status: 200,
       message: "Order updated",
+      data: result,
     });
   } catch (error) {
     return next(error);

@@ -25,12 +25,19 @@ router.post(
   async (request, response, next) => {
     try {
       const newMerchant = await createMerchant(request.body);
+      const { user, accessToken } = await loginUser(
+        newMerchant._id,
+        "Merchant"
+      );
       response.status(201).json({
         status: 201,
-        newMerchant: newMerchant,
-        accessToken: request.accessToken,
+        message: "Merchant registered and logged in",
+        user: user,
+        accessToken: accessToken,
       });
     } catch (error) {
+      error.status = 422;
+      console.log(error);
       return next(error);
     }
   }
@@ -41,8 +48,7 @@ router.get("/", async (request, response, next) => {
     const result = await filterCollection("Merchant", request.query);
     response.status(200).json({
       status: 200,
-      result: result.flat(),
-      accessToken: parseJWT(request.headers.authorization) || null,
+      data: result.flat(),
     });
   } catch (error) {
     return next(error);
@@ -54,8 +60,7 @@ router.get("/:id", async (request, response, next) => {
     const result = await getMerchantByID(request.params.id);
     response.status(200).json({
       status: 200,
-      result: result,
-      accessToken: parseJWT(request.headers.authorization) || null,
+      data: result,
     });
   } catch (error) {
     return next(error);
@@ -74,8 +79,8 @@ router.put(
       });
       response.status(200).json({
         status: 200,
-        updates: result.updatedFields,
-        accessToken: request.accessToken,
+        message: "Merchant updated",
+        data: result,
       });
     } catch (error) {
       console.log(error);
@@ -90,8 +95,7 @@ router.get("/:id/stock/products", async (request, response, next) => {
     const result = await getMerchantStock(request.params.id);
     response.status(200).json({
       status: 200,
-      result: result,
-      accessToken: parseJWT(request.headers.authorization) || null,
+      data: result,
     });
   } catch (error) {
     return next(error);
@@ -110,7 +114,7 @@ router.put(
       });
       response.status(200).json({
         status: 200,
-        message: "Merchant updated",
+        message: "Stock quantity updated",
         accessToken: request.accessToken,
       });
     } catch (error) {
@@ -133,8 +137,8 @@ router.post(
       });
       response.status(200).json({
         status: 200,
+        message: "Product added to stock",
         data: result,
-        accessToken: request.accessToken,
       });
     } catch (error) {
       return next(error);
@@ -151,8 +155,8 @@ router.delete(
       const result = await removeStockProduct(request.body.stockProduct);
       response.status(200).json({
         status: 200,
+        message: "Product removed from stock",
         data: result,
-        accessToken: request.accessToken,
       });
     } catch (error) {
       return next(error);
@@ -173,7 +177,6 @@ router.get(
       response.status(200).json({
         status: 200,
         data: result,
-        accessToken: request.accessToken,
       });
     } catch (error) {
       return next(error);
