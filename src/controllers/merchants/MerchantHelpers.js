@@ -50,36 +50,16 @@ async function getMerchantStock(merchantID) {
 
 async function updateMerchant(updateData) {
   const { id, data } = updateData;
-  let originalMerchant;
   try {
-    originalMerchant = await Merchant.findByIdAndUpdate(id, data, {
+    return await Merchant.findByIdAndUpdate(id, data, {
       returnDocument: "before",
     })
-      .select("+password")
       .lean()
       .exec();
   } catch (err) {
     console.log(err);
     throw { message: ": : Merchant could not be found", status: 400 };
   }
-  const updatedMerchant = await Merchant.findById(id)
-    .select("+password")
-    .lean()
-    .exec();
-  const updatedFields = omit(updatedMerchant, (value, field) => {
-    return originalMerchant[field]?.toString() === value?.toString();
-  });
-  // MAY NOT NEED... /////////////////////////////////////////////
-  if (!Object.keys(updatedFields).length) {
-    throw { message: ": : No updates specified", status: 400 };
-  }
-  if (updatedFields.password) {
-    updatedFields.password = "Password updated";
-  }
-  return {
-    updatedMerchant: updatedMerchant,
-    updatedFields: updatedFields,
-  };
 }
 
 async function updateStockQuantity(updateData) {

@@ -50,7 +50,6 @@ router.get(
       response.status(200).json({
         status: 200,
         result: result.flat(),
-        accessToken: request.accessToken,
       });
     } catch (err) {
       return next(err);
@@ -68,7 +67,6 @@ router.get(
       const result = await getCustomerByID(request.params.id);
       response.status(200).json({
         result: result,
-        accessToken: request.accessToken,
       });
     } catch (err) {
       return next(err);
@@ -89,8 +87,7 @@ router.put(
       });
       response.status(200).json({
         status: 200,
-        updates: result.updatedFields,
-        accessToken: request.accessToken,
+        message: "Customer updated",
       });
     } catch (error) {
       error.status = 400;
@@ -106,7 +103,10 @@ router.delete(
   allowOwnerOrAdmin,
   async (request, response, next) => {
     await deleteCustomer(request.params.id);
-    response.status(204).json();
+    response.status(204).json({
+      status: 204,
+      message: "Customer deleted",
+    });
   }
 );
 
@@ -120,8 +120,7 @@ router.get(
       const cart = await getCartByCustomerID(request.params.id);
       response.status(200).json({
         status: 200,
-        cart: cart,
-        accessToken: request.accessToken,
+        data: cart,
       });
     } catch (error) {
       return next(error);
@@ -141,8 +140,8 @@ router.post(
       );
       response.status(200).json({
         status: 200,
-        cart: updatedCart,
-        accessToken: request.accessToken,
+        message: "Product added to cart",
+        data: updatedCart,
       });
     } catch (error) {
       return next(error);
@@ -163,8 +162,7 @@ router.put(
       );
       response.status(200).json({
         status: 200,
-        cart: updatedCart,
-        accessToken: request.accessToken,
+        message: "Product added to cart",
       });
     } catch (error) {
       return next(error);
@@ -184,8 +182,7 @@ router.delete(
       );
       response.status(200).json({
         status: 200,
-        cart: updatedCart,
-        accessToken: request.accessToken,
+        message: "Product removed from cart",
       });
     } catch (error) {
       return next(error);
@@ -206,7 +203,6 @@ router.get(
       response.status(200).json({
         status: 200,
         data: result,
-        accessToken: request.accessToken,
       });
     } catch (error) {
       return next(error);

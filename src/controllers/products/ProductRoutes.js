@@ -42,8 +42,8 @@ router.post(
       const newProduct = await createProduct(request.body);
       response.status(201).json({
         status: 201,
+        message: "Product created",
         data: newProduct,
-        accessToken: request.accessToken,
       });
     } catch (error) {
       return next(error);
@@ -63,8 +63,8 @@ router.put(
       });
       response.status(200).json({
         status: 200,
+        message: "Product updated",
         data: product,
-        accessToken: request.accessToken,
       });
     } catch (error) {
       return next(error);
@@ -81,8 +81,8 @@ router.delete(
       const product = await deleteProduct(request.params.id);
       response.status(200).json({
         status: 200,
+        message: "Product deleted",
         data: product,
-        accessToken: request.accessToken,
       });
     } catch (error) {
       return next(error);
