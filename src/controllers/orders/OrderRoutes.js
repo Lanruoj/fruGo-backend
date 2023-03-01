@@ -1,6 +1,10 @@
 const express = require("express");
 const router = express.Router();
-const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
+const {
+  authenticateUser,
+  allowAdminOnly,
+  verifyOwnerOfOrder,
+} = require("../auth/authMiddleware");
 const { filterCollection } = require("../helpers");
 const {
   getAllOrders,
@@ -26,17 +30,22 @@ router.get(
   }
 );
 
-router.get("/:id", authenticateUser, async (request, response, next) => {
-  try {
-    const result = await getOrderByID(request.params.id);
-    response.status(200).json({
-      status: 200,
-      data: result,
-    });
-  } catch (error) {
-    return next(error);
+router.get(
+  "/:id",
+  authenticateUser,
+  verifyOwnerOfOrder,
+  async (request, response, next) => {
+    try {
+      const result = await getOrderByID(request.params.id);
+      response.status(200).json({
+        status: 200,
+        data: result,
+      });
+    } catch (error) {
+      return next(error);
+    }
   }
-});
+);
 
 router.post("/", authenticateUser, async (request, response, next) => {
   try {
