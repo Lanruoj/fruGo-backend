@@ -50,11 +50,7 @@ switch (process.env.NODE_ENV.toLowerCase()) {
 // Configure CORS settings
 const cors = require("cors");
 const corsOptions = {
-  origin: [
-    `http://${HOST}:${PORT}`,
-    "https://frugo-backend.up.railway.app/",
-    "https://frugo-backend-development.up.railway.app",
-  ],
+  origin: [`http://${HOST}:${PORT}`, "http://localhost:3000"],
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));

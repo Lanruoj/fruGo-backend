@@ -14,6 +14,7 @@ router.post("/login", validateLoginDetails, async (request, response, next) => {
       status: 200,
       message: "You have been logged in",
       user: user,
+      role: request.role,
       accessToken: accessToken,
     };
     if (cart) responseObject.cart = cart;

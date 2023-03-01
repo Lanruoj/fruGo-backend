@@ -31,7 +31,13 @@ router.post("/register", async (request, response, next) => {
     );
     response
       .status(201)
-      .json({ status: 201, user: user, cart: cart, accessToken: accessToken });
+      .json({
+        status: 201,
+        user: user,
+        cart: cart,
+        role: request.role,
+        accessToken: accessToken,
+      });
   } catch (error) {
     error.status = 422;
     console.log(error);
