@@ -1,4 +1,5 @@
 const { omit } = require("underscore");
+const mongoose = require("mongoose");
 const { Merchant } = require("../../models/Merchant");
 const { StockProduct } = require("../../models/StockProduct");
 
@@ -126,6 +127,49 @@ async function removeStockProduct(data) {
   }
 }
 
+async function searchStockProducts(merchantID, queryString) {
+  const queries = Object.entries(queryString);
+  let queryArray = [];
+  for (let query of queries) {
+    let queryObject = {};
+    const valueIsObjectId = mongoose.isValidObjectId(query[1]);
+    if (query[0][0] == "_" && valueIsObjectId) {
+      key = `${query[0]}`;
+      value = mongoose.Types.ObjectId(query[1]);
+    } else {
+      key = `product.${query[0]}`;
+      value = { $regex: new RegExp(query[1], "i") };
+    }
+    queryObject[key] = value;
+    queryArray.push(queryObject);
+  }
+  const results = await StockProduct.aggregate([
+    {
+      $lookup: {
+        from: "products",
+        localField: "_product",
+        foreignField: "_id",
+        as: "product",
+      },
+    },
+    {
+      $match: {
+        $and: [
+          { "_merchant": mongoose.Types.ObjectId(merchantID) },
+          ...queryArray,
+        ],
+      },
+    },
+  ]).exec();
+  if (!results.length) {
+    throw {
+      message: ": : No results found matching that criteria",
+      status: 404,
+    };
+  }
+  return results;
+}
+
 module.exports = {
   getMerchantByID,
   createMerchant,
@@ -134,4 +178,5 @@ module.exports = {
   updateStockQuantity,
   createNewStockProduct,
   removeStockProduct,
+  searchStockProducts,
 };
