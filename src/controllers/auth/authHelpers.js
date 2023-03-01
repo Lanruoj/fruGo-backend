@@ -28,6 +28,23 @@ async function loginUser(userID, role) {
   return { user, cart, accessToken };
 }
 
+async function logoutUser(userID, role) {
+  let user = await mongoose.model(role).findById(userID).exec();
+  // Log user out if already logged in
+  if (user.loggedIn) {
+    user = await mongoose
+      .model(role)
+      .findByIdAndUpdate(
+        userID,
+        { loggedIn: false },
+        { returnDocument: "after" }
+      )
+      .exec();
+  }
+  return user;
+}
+
 module.exports = {
   loginUser,
+  logoutUser,
 };
