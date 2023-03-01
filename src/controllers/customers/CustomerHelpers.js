@@ -52,7 +52,7 @@ async function deleteCustomer(customerID) {
 
 async function getCustomersMerchant(customerID) {
   const customer = await Customer.findById(customerID).exec();
-  return await Merchant.findOne({ _city: customer._city });
+  return await Merchant.findOne({ _city: customer._city }).exec();
 }
 
 module.exports = {
