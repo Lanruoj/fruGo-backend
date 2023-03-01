@@ -71,6 +71,7 @@ app.use("/customers", require("./controllers/customers/CustomerRoutes"));
 app.use("/merchants", require("./controllers/merchants/MerchantRoutes"));
 app.use("/products", require("./controllers/products/ProductRoutes"));
 app.use("/orders", require("./controllers/orders/OrderRoutes"));
+app.use("/cities", require("./controllers/cities/CityRoutes"));
 
 app.get("/", (request, response) => {
   response.status(200).json({
