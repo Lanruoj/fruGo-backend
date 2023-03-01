@@ -160,6 +160,7 @@ async function searchStockProducts(merchantID, queryString) {
         ],
       },
     },
+    { $unwind: "$product" },
   ]).exec();
   if (!results.length) {
     throw {
