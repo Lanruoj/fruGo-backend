@@ -32,6 +32,7 @@ router.post(
         status: 201,
         message: "Merchant registered and logged in",
         user: user,
+        role: request.role,
         accessToken: accessToken,
       });
     } catch (error) {
