@@ -4,18 +4,17 @@ const { filterCollection } = require("../helpers");
 const {
   createMerchant,
   getMerchantByID,
-  getMerchantStock,
   updateMerchant,
   updateStockQuantity,
   createNewStockProduct,
   removeStockProduct,
+  searchStockProducts,
 } = require("./MerchantHelpers");
 const {
   authenticateUser,
   allowAdminOnly,
   allowOwnerOrAdmin,
 } = require("../auth/authMiddleware");
-const { parseJWT } = require("../helpers");
 const { getOrdersByMerchantID } = require("../orders/OrderHelpers");
 
 router.post(
@@ -92,7 +91,7 @@ router.put(
 
 router.get("/:id/stock/products", async (request, response, next) => {
   try {
-    const result = await getMerchantStock(request.params.id);
+    const result = await searchStockProducts(request.params.id, request.query);
     response.status(200).json({
       status: 200,
       data: result,
