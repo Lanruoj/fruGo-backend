@@ -299,28 +299,28 @@ async function seedDatabase() {
         _cartProducts: cartProducts,
       });
       // Seed orders
+      let createdOrders = [];
       for ([index, order] of orders.entries()) {
-        // console.log(`createdCustomers[0]._id : ${createdCustomers[0]._id}`);
         order._customer = createdCustomers[0];
         order._merchant = createdMerchants[0];
         order._orderProducts = createdCart._cartProducts;
-        // console.log(order);
-        const createdOrder = await Order.insertMany(order);
-        await Customer.findByIdAndUpdate(
-          createdOrder._customer,
-          {
-            $push: { orders: createdOrder },
-          },
-          { returnDocument: "after" }
-        );
-        await Merchant.findByIdAndUpdate(
-          createdOrder._customer_merchant,
-          {
-            $push: { orders: createdOrder },
-          },
-          { returnDocument: "after" }
-        );
+        createdOrders.push(order);
       }
+      createdOrders = await Order.insertMany(createdOrders);
+      await Customer.findByIdAndUpdate(
+        createdCustomers[0]._id,
+        {
+          $push: { orders: { $each: createdOrders } },
+        },
+        { returnDocument: "after" }
+      );
+      await Merchant.findByIdAndUpdate(
+        createdMerchants[0]._id,
+        {
+          $push: { orders: { $each: createdOrders } },
+        },
+        { returnDocument: "after" }
+      );
     })
     .then(async () => {
       await mongoose.connection.close();
