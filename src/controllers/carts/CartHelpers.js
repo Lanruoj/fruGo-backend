@@ -8,14 +8,8 @@ async function getCartByCustomerID(customerID) {
     const cart = await Cart.findOne({ _customer: customerID })
       .populate({
         path: "_cartProducts",
-        populate: {
-          path: "_stockProduct",
-          model: "StockProduct",
-          populate: {
-            path: "_product",
-            model: "Product",
-          },
-        },
+        model: "StockProduct",
+        populate: { path: "_product", model: "Product" },
       })
       .exec();
     return cart;
@@ -50,33 +44,27 @@ async function addToCart(customerID, stockProductID) {
     let cart = await Cart.findOneAndUpdate(
       {
         _customer: customerID,
-        "_cartProducts._stockProduct": { $ne: stockProductID },
+        "_cartProducts": { $ne: stockProductID },
       },
       {
         $addToSet: {
-          _cartProducts: { _stockProduct: stockProductID },
+          _cartProducts: stockProductID,
         },
       },
       { returnDocument: "after" }
     )
       .populate({
         path: "_cartProducts",
-        populate: {
-          path: "_stockProduct",
-          model: "StockProduct",
-          populate: { path: "_product", model: "Product" },
-        },
+        model: "StockProduct",
+        populate: { path: "_product", model: "Product" },
       })
       .exec();
     if (!cart) {
       cart = await Cart.findOne({ _customer: customerID })
         .populate({
           path: "_cartProducts",
-          populate: {
-            path: "_stockProduct",
-            model: "StockProduct",
-            populate: { path: "_product", model: "Product" },
-          },
+          model: "StockProduct",
+          populate: { path: "_product", model: "Product" },
         })
         .exec();
     }
@@ -88,46 +76,46 @@ async function addToCart(customerID, stockProductID) {
   }
 }
 
-async function updateCartProductQuantity(customerID, stockProductID, quantity) {
-  try {
-    const stockProduct = await StockProduct.findById(stockProductID)
-      .populate({ path: "_product", model: "Product" })
-      .exec();
-    if (stockProduct.quantity < quantity || quantity < 1) {
-      const error = new Error();
-      error.message = `: : Only ${stockProduct.quantity} ${
-        stockProduct._product.name.toLowerCase() + "s"
-      } in stock`;
-      throw error;
-    }
-    const cart = await Cart.findOneAndUpdate(
-      {
-        _customer: customerID,
-        "_cartProducts._stockProduct": stockProductID,
-      },
-      {
-        $set: {
-          "_cartProducts.$.subQuantity": quantity,
-        },
-      },
-      { returnDocument: "after" }
-    )
-      .populate({
-        path: "_cartProducts",
-        populate: {
-          path: "_stockProduct",
-          model: "StockProduct",
-          populate: { path: "_product", model: "Product" },
-        },
-      })
-      .exec();
-    return cart;
-  } catch (error) {
-    console.log(error);
-    error.status = 400;
-    throw error;
-  }
-}
+// async function updateCartProductQuantity(customerID, stockProductID, quantity) {
+//   try {
+//     const stockProduct = await StockProduct.findById(stockProductID)
+//       .populate({ path: "_product", model: "Product" })
+//       .exec();
+//     if (stockProduct.quantity < quantity || quantity < 1) {
+//       const error = new Error();
+//       error.message = `: : Only ${stockProduct.quantity} ${
+//         stockProduct._product.name.toLowerCase() + "s"
+//       } in stock`;
+//       throw error;
+//     }
+//     const cart = await Cart.findOneAndUpdate(
+//       {
+//         _customer: customerID,
+//         "_cartProducts._stockProduct": stockProductID,
+//       },
+//       {
+//         $set: {
+//           "_cartProducts.$.subQuantity": quantity,
+//         },
+//       },
+//       { returnDocument: "after" }
+//     )
+//       .populate({
+//         path: "_cartProducts",
+//         populate: {
+//           path: "_stockProduct",
+//           model: "StockProduct",
+//           populate: { path: "_product", model: "Product" },
+//         },
+//       })
+//       .exec();
+//     return cart;
+//   } catch (error) {
+//     console.log(error);
+//     error.status = 400;
+//     throw error;
+//   }
+// }
 
 async function removeFromCart(customerID, stockProductID, query) {
   try {
@@ -140,26 +128,20 @@ async function removeFromCart(customerID, stockProductID, query) {
       )
         .populate({
           path: "_cartProducts",
-          populate: {
-            path: "_stockProduct",
-            model: "StockProduct",
-            populate: { path: "_product", model: "Product" },
-          },
+          model: "StockProduct",
+          populate: { path: "_product", model: "Product" },
         })
         .exec();
     } else {
       cart = await Cart.findOneAndUpdate(
         { _customer: customerID },
-        { $pull: { _cartProducts: { _stockProduct: stockProductID } } },
+        { $pull: { _cartProducts: stockProductID } },
         { returnDocument: "after" }
       )
         .populate({
           path: "_cartProducts",
-          populate: {
-            path: "_stockProduct",
-            model: "StockProduct",
-            populate: { path: "_product", model: "Product" },
-          },
+          model: "StockProduct",
+          populate: { path: "_product", model: "Product" },
         })
         .exec();
     }
@@ -188,6 +170,6 @@ module.exports = {
   createCart,
   addToCart,
   removeFromCart,
-  updateCartProductQuantity,
+  // updateCartProductQuantity,
   clearCart,
 };
