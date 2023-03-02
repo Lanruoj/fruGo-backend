@@ -47,7 +47,7 @@ async function createCart(customerID) {
 
 async function addToCart(customerID, stockProductID) {
   try {
-    const cart = await Cart.findOneAndUpdate(
+    let cart = await Cart.findOneAndUpdate(
       {
         _customer: customerID,
         "_cartProducts._stockProduct": { $ne: stockProductID },
@@ -68,6 +68,18 @@ async function addToCart(customerID, stockProductID) {
         },
       })
       .exec();
+    if (!cart) {
+      cart = await Cart.findOne({ _customer: customerID })
+        .populate({
+          path: "_cartProducts",
+          populate: {
+            path: "_stockProduct",
+            model: "StockProduct",
+            populate: { path: "_product", model: "Product" },
+          },
+        })
+        .exec();
+    }
     return cart;
   } catch (error) {
     console.log(error);
