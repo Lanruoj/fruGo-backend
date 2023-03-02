@@ -14,11 +14,8 @@ const CartSchema = new mongoose.Schema(
     },
     _cartProducts: [
       {
-        _stockProduct: {
-          type: mongoose.Schema.Types.ObjectId,
-          ref: "StockProduct",
-        },
-        subQuantity: { type: Number, default: 1 },
+        type: mongoose.Schema.Types.ObjectId,
+        ref: "StockProduct",
       },
     ],
   },
