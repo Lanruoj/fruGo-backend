@@ -76,47 +76,6 @@ async function addToCart(customerID, stockProductID) {
   }
 }
 
-// async function updateCartProductQuantity(customerID, stockProductID, quantity) {
-//   try {
-//     const stockProduct = await StockProduct.findById(stockProductID)
-//       .populate({ path: "_product", model: "Product" })
-//       .exec();
-//     if (stockProduct.quantity < quantity || quantity < 1) {
-//       const error = new Error();
-//       error.message = `: : Only ${stockProduct.quantity} ${
-//         stockProduct._product.name.toLowerCase() + "s"
-//       } in stock`;
-//       throw error;
-//     }
-//     const cart = await Cart.findOneAndUpdate(
-//       {
-//         _customer: customerID,
-//         "_cartProducts._stockProduct": stockProductID,
-//       },
-//       {
-//         $set: {
-//           "_cartProducts.$.subQuantity": quantity,
-//         },
-//       },
-//       { returnDocument: "after" }
-//     )
-//       .populate({
-//         path: "_cartProducts",
-//         populate: {
-//           path: "_stockProduct",
-//           model: "StockProduct",
-//           populate: { path: "_product", model: "Product" },
-//         },
-//       })
-//       .exec();
-//     return cart;
-//   } catch (error) {
-//     console.log(error);
-//     error.status = 400;
-//     throw error;
-//   }
-// }
-
 async function removeFromCart(customerID, stockProductID, query) {
   try {
     let cart;
@@ -170,6 +129,5 @@ module.exports = {
   createCart,
   addToCart,
   removeFromCart,
-  // updateCartProductQuantity,
   clearCart,
 };
