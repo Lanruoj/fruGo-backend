@@ -105,7 +105,7 @@ router.get("/:id/stock/products", async (request, response, next) => {
 router.put(
   "/:id/stock/products",
   authenticateUser,
-  allowOwnerOrAdmin,
+  // allowOwnerOrAdmin,
   async (request, response, next) => {
     try {
       const result = await updateStockQuantity({
@@ -115,7 +115,7 @@ router.put(
       response.status(200).json({
         status: 200,
         message: "Stock quantity updated",
-        accessToken: request.accessToken,
+        data: result,
       });
     } catch (error) {
       error.status = 400;
@@ -127,7 +127,7 @@ router.put(
 router.post(
   "/:id/stock/products",
   authenticateUser,
-  allowOwnerOrAdmin,
+  // allowOwnerOrAdmin,
   async (request, response, next) => {
     try {
       const result = await createNewStockProduct({
@@ -149,7 +149,7 @@ router.post(
 router.delete(
   "/:id/stock/products",
   authenticateUser,
-  allowOwnerOrAdmin,
+  // allowOwnerOrAdmin,
   async (request, response, next) => {
     try {
       const result = await removeStockProduct(request.body.stockProduct);
