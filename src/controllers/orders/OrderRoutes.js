@@ -49,7 +49,7 @@ router.get(
 
 router.post("/", authenticateUser, async (request, response, next) => {
   try {
-    const result = await createOrder(request.user);
+    const result = await createOrder(request.user, request.body);
     response.status(200).json({
       status: 200,
       message: "Order created",
