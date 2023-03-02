@@ -64,16 +64,15 @@ async function updateMerchant(updateData) {
 }
 
 async function updateStockQuantity(updateData) {
-  let { stockProduct, quantity } = updateData;
-  let originalStockProduct;
+  const { stockProduct, quantity } = updateData;
   try {
-    originalStockProduct = await StockProduct.findOneAndUpdate(
+    return await StockProduct.findOneAndUpdate(
       { _id: stockProduct },
       {
         quantity: quantity,
       },
       {
-        returnDocument: "before",
+        returnDocument: "after",
       }
     )
       .lean()
@@ -81,20 +80,6 @@ async function updateStockQuantity(updateData) {
   } catch (err) {
     throw { message: ": : Merchant could not be found", status: 400 };
   }
-  const updatedStockProduct = await StockProduct.findOne({ _id: stockProduct })
-    .lean()
-    .exec();
-  const updatedFields = omit(updatedStockProduct, (value, field) => {
-    return originalStockProduct[field]?.toString() === value?.toString();
-  });
-  // MAY NOT NEED... /////////////////////////////////////////////
-  if (!Object.keys(updatedFields).length) {
-    throw { message: ": : No updates specified", status: 400 };
-  }
-  return {
-    updatedStockProduct: updatedStockProduct,
-    updatedFields: updatedFields,
-  };
 }
 
 async function createNewStockProduct(data) {

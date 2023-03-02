@@ -16,7 +16,6 @@ const {
   getCartByCustomerID,
   addToCart,
   removeFromCart,
-  // updateCartProductQuantity,
 } = require("../carts/CartHelpers");
 const { loginUser } = require("../auth/authHelpers");
 const { getOrdersByCustomerID } = require("../orders/OrderHelpers");
@@ -152,27 +151,6 @@ router.post(
     }
   }
 );
-
-// router.put(
-//   "/:id/cart/products",
-//   authenticateUser,
-//   allowOwnerOrAdmin,
-//   async (request, response, next) => {
-//     try {
-//       const updatedCart = await updateCartProductQuantity(
-//         request.params.id,
-//         request.body.product,
-//         request.body.quantity
-//       );
-//       response.status(200).json({
-//         status: 200,
-//         message: "Product added to cart",
-//       });
-//     } catch (error) {
-//       return next(error);
-//     }
-//   }
-// );
 
 router.delete(
   "/:id/cart/products",

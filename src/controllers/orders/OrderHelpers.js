@@ -9,7 +9,19 @@ const { getCustomersMerchant } = require("../customers/CustomerHelpers");
 
 async function getAllOrders() {
   try {
-    const orders = await Order.find().exec();
+    const orders = await Order.find()
+      .populate({
+        path: "_orderProducts",
+        populate: {
+          path: "stockProduct",
+          model: "StockProduct",
+          populate: {
+            path: "_product",
+            model: "Product",
+          },
+        },
+      })
+      .exec();
     if (!orders) {
       const error = new Error();
       error.message = ": : No orders found";
@@ -28,10 +40,13 @@ async function getOrderByID(orderID) {
     const order = await Order.findById(orderID)
       .populate({
         path: "_orderProducts",
-        model: "StockProduct",
         populate: {
-          path: "_product",
-          model: "Product",
+          path: "stockProduct",
+          model: "StockProduct",
+          populate: {
+            path: "_product",
+            model: "Product",
+          },
         },
       })
       .exec();
@@ -49,7 +64,19 @@ async function getOrderByID(orderID) {
 }
 
 async function getOrdersByCustomerID(customerID, status) {
-  let orders = await Order.find({ _customer: customerID }).exec();
+  let orders = await Order.find({ _customer: customerID })
+    .populate({
+      path: "_orderProducts",
+      populate: {
+        path: "stockProduct",
+        model: "StockProduct",
+        populate: {
+          path: "_product",
+          model: "Product",
+        },
+      },
+    })
+    .exec();
   if (status) {
     orders = orders.filter((order) => order.status == status);
   }
@@ -57,35 +84,39 @@ async function getOrdersByCustomerID(customerID, status) {
 }
 
 async function getOrdersByMerchantID(merchantID, status) {
-  let orders = await Order.find({ _merchant: merchantID }).exec();
+  let orders = await Order.find({ _merchant: merchantID })
+    .populate({
+      path: "_orderProducts",
+      populate: {
+        path: "stockProduct",
+        model: "StockProduct",
+        populate: {
+          path: "_product",
+          model: "Product",
+        },
+      },
+    })
+    .exec();
   if (status) {
     orders = orders.filter((order) => order.status == status);
   }
   return orders;
 }
 
-async function createOrder(customerID) {
+async function createOrder(customerID, data) {
   try {
-    const cart = await Cart.findOne({ _customer: customerID })
-      .populate({
-        path: "_cartProducts",
-        model: "StockProduct",
-        populate: { path: "_product", model: "Product" },
-      })
-      .exec();
-    if (!cart._cartProducts.length) {
-      const error = new Error();
-      error.message = ": : Cart is empty";
-      error.status = 400;
-      throw error;
-    }
     const merchant = await getCustomersMerchant(customerID);
+    let totalPrice = 0;
+    for (let cartProduct of data.cartProducts) {
+      totalPrice +=
+        cartProduct.quantity * cartProduct.stockProduct._product.price;
+    }
     const order = await Order.create({
       _customer: customerID,
       _merchant: merchant._id,
-      _orderProducts: cart._cartProducts,
+      _orderProducts: data.cartProducts,
+      totalPrice: totalPrice,
     });
-    console.log(order._orderProducts);
     await Customer.findByIdAndUpdate(
       order._customer,
       {
