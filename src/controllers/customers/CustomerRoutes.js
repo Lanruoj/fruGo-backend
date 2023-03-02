@@ -183,7 +183,8 @@ router.delete(
     try {
       const updatedCart = await removeFromCart(
         request.params.id,
-        request.body.product
+        request.body.product,
+        request.query
       );
       response.status(200).json({
         status: 200,
