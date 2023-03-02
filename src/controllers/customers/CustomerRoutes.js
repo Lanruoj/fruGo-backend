@@ -25,14 +25,13 @@ const { getOrdersByCustomerID } = require("../orders/OrderHelpers");
 router.post("/register", async (request, response, next) => {
   try {
     const newCustomer = await createCustomer(request.body);
-    const { user, cart, merchant, accessToken } = await loginUser(
+    const { user, merchant, accessToken } = await loginUser(
       newCustomer._id,
       "Customer"
     );
     response.status(201).json({
       status: 201,
       user: user,
-      cart: cart,
       merchant: merchant,
       role: "Customer",
       accessToken: accessToken,
@@ -189,6 +188,7 @@ router.delete(
       response.status(200).json({
         status: 200,
         message: "Product removed from cart",
+        data: updatedCart,
       });
     } catch (error) {
       return next(error);
