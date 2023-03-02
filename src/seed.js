@@ -287,10 +287,7 @@ async function seedDatabase() {
       // Seed carts
       let cartProducts = [];
       for ([index, stockProduct] of createdStockProducts.entries()) {
-        let cartProduct = {
-          _stockProduct: stockProduct._id,
-          subQuantity: Math.floor(Math.random() * 20),
-        };
+        let cartProduct = createdStockProducts[index];
         cartProducts.push(cartProduct);
       }
       const createdCart = await Cart.create({
