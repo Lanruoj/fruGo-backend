@@ -29,7 +29,7 @@ const CartSchema = new mongoose.Schema(
   }
 );
 
-CartSchema.pre("findOne", function (next) {
+CartSchema.pre("find", function (next) {
   this.populate({
     path: "_cartProducts",
     populate: {
@@ -39,15 +39,6 @@ CartSchema.pre("findOne", function (next) {
     },
   });
   next();
-});
-
-CartSchema.virtual("totalPrice").get(function () {
-  let totalPrice = 0;
-  for (let cartProduct of this._cartProducts) {
-    totalPrice +=
-      cartProduct.subQuantity * cartProduct._stockProduct._product.price;
-  }
-  return totalPrice;
 });
 
 const Cart = mongoose.model("Cart", CartSchema);
