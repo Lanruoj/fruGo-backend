@@ -37,7 +37,7 @@ async function updateCustomer(updateData) {
   const { id, data } = updateData;
   try {
     return await Customer.findByIdAndUpdate(id, data, {
-      returnDocument: "before",
+      returnDocument: "after",
     })
       .lean()
       .exec();
