@@ -117,22 +117,40 @@ async function updateCartProductQuantity(customerID, stockProductID, quantity) {
   }
 }
 
-async function removeFromCart(customerID, stockProductID) {
+async function removeFromCart(customerID, stockProductID, query) {
   try {
-    const cart = await Cart.findOneAndUpdate(
-      { _customer: customerID },
-      { $pull: { _cartProducts: { _stockProduct: stockProductID } } },
-      { returnDocument: "after" }
-    )
-      .populate({
-        path: "_cartProducts",
-        populate: {
-          path: "_stockProduct",
-          model: "StockProduct",
-          populate: { path: "_product", model: "Product" },
-        },
-      })
-      .exec();
+    let cart;
+    if (query.all == "true") {
+      cart = await Cart.findOneAndUpdate(
+        { _customer: customerID },
+        { $set: { _cartProducts: [] } },
+        { returnDocument: "after" }
+      )
+        .populate({
+          path: "_cartProducts",
+          populate: {
+            path: "_stockProduct",
+            model: "StockProduct",
+            populate: { path: "_product", model: "Product" },
+          },
+        })
+        .exec();
+    } else {
+      cart = await Cart.findOneAndUpdate(
+        { _customer: customerID },
+        { $pull: { _cartProducts: { _stockProduct: stockProductID } } },
+        { returnDocument: "after" }
+      )
+        .populate({
+          path: "_cartProducts",
+          populate: {
+            path: "_stockProduct",
+            model: "StockProduct",
+            populate: { path: "_product", model: "Product" },
+          },
+        })
+        .exec();
+    }
     return cart;
   } catch (error) {
     console.log(error);
