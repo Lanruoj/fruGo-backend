@@ -100,15 +100,19 @@ async function validateLoginDetails(request, response, next) {
 }
 
 async function verifyOwnerOfOrder(request, response, next) {
-  const order = await Order.findById(request.params.id).exec();
-  let role = `_${request.role.toLowerCase()}`;
-  if (request.user != order[role]) {
-    const error = new Error();
-    error.message = ": : Unauthorised";
-    error.status = 401;
-    return next(error);
+  try {
+    const order = await Order.findById(request.params.id).exec();
+    let role = `_${request.role.toLowerCase()}`;
+    if (request.user != order[role]) {
+      const error = new Error();
+      error.message = ": : Unauthorised";
+      error.status = 401;
+      return next(error);
+    }
+    next();
+  } catch (error) {
+    console.log(error);
   }
-  next();
 }
 
 module.exports = {
