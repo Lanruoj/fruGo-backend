@@ -8,7 +8,14 @@ async function getCartByCustomerID(customerID) {
     const cart = await Cart.findOne({ _customer: customerID })
       .populate({
         path: "_cartProducts",
-        populate: { path: "_stockProduct", model: "StockProduct" },
+        populate: {
+          path: "_stockProduct",
+          model: "StockProduct",
+          populate: {
+            path: "_product",
+            model: "Product",
+          },
+        },
       })
       .exec();
     return cart;
@@ -114,7 +121,7 @@ async function removeFromCart(customerID, stockProductID) {
   try {
     const cart = await Cart.findOneAndUpdate(
       { _customer: customerID },
-      { $pull: { products: { _stockProduct: stockProductID } } },
+      { $pull: { _cartProducts: { _stockProduct: stockProductID } } },
       { returnDocument: "after" }
     )
       .populate({
