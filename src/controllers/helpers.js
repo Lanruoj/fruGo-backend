@@ -81,6 +81,25 @@ async function filterCollection(model, queryString) {
   return results;
 }
 
+async function searchBarFilter(model, queryString) {
+  const queries = Object.entries(queryString);
+  if (!queries.length) return await mongoose.model(model).find({}).exec();
+  // Construct query object to use in find()
+  let queryObject = {};
+  for (query of queries) {
+    const key = query[0];
+    const valueIsObjectId = mongoose.isValidObjectId(query[1]);
+    if (key[0] == "_" && valueIsObjectId) {
+      value = query[1];
+    } else {
+      value = { $regex: new RegExp(query[1], "i") };
+    }
+    queryObject[key] = value;
+  }
+  const results = await mongoose.model(model).find(queryObject).exec();
+  return results;
+}
+
 module.exports = {
   hashString,
   validateHashedData,
@@ -89,4 +108,5 @@ module.exports = {
   generateAccessToken,
   filterCollection,
   verifyJWT,
+  searchBarFilter,
 };
