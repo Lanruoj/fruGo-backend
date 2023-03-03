@@ -297,10 +297,16 @@ async function seedDatabase() {
       });
       // Seed orders
       let createdOrders = [];
+      const orderProducts = createdCart._cartProducts.map((cartProduct) => {
+        return {
+          stockProduct: cartProduct._id,
+          quantity: 3,
+        };
+      });
       for ([index, order] of orders.entries()) {
         order._customer = createdCustomers[0];
         order._merchant = createdMerchants[0];
-        order._orderProducts = createdCart._cartProducts;
+        order._orderProducts = orderProducts;
         createdOrders.push(order);
       }
       createdOrders = await Order.insertMany(createdOrders);
