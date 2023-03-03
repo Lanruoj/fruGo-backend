@@ -107,6 +107,7 @@ async function createOrder(customerID, data) {
   try {
     const merchant = await getCustomersMerchant(customerID);
     let totalPrice = 0;
+    if (!data.cartProducts.length) throw Error("Cart is empty");
     for (let cartProduct of data.cartProducts) {
       totalPrice +=
         cartProduct.quantity * cartProduct.stockProduct._product.price;
