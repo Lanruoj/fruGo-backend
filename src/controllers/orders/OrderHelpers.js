@@ -22,19 +22,6 @@ async function getAllOrders() {
         },
       })
       .exec();
-    for (let order of orders) {
-      order = await Order.findById(order._id).populate({
-        path: "_orderProducts",
-        populate: {
-          path: "stockProduct",
-          model: "StockProduct",
-          populate: {
-            path: "_product",
-            model: "Product",
-          },
-        },
-      });
-    }
     if (!orders) {
       const error = new Error();
       error.message = ": : No orders found";
@@ -90,20 +77,6 @@ async function getOrdersByCustomerID(customerID, status) {
       },
     })
     .exec();
-  for (let order of orders) {
-    order = await Order.findById(order._id).populate({
-      path: "_orderProducts",
-      populate: {
-        path: "stockProduct",
-        model: "StockProduct",
-        populate: {
-          path: "_product",
-          model: "Product",
-        },
-      },
-    });
-  }
-  console.log(orders);
   if (status) {
     orders = orders.filter((order) => order.status == status);
   }
@@ -124,19 +97,6 @@ async function getOrdersByMerchantID(merchantID, status) {
       },
     })
     .exec();
-  for (let order of orders) {
-    order = await Order.findById(order._id).populate({
-      path: "_orderProducts",
-      populate: {
-        path: "stockProduct",
-        model: "StockProduct",
-        populate: {
-          path: "_product",
-          model: "Product",
-        },
-      },
-    });
-  }
   if (status) {
     orders = orders.filter((order) => order.status == status);
   }
