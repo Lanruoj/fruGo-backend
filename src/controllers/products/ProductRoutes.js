@@ -1,5 +1,5 @@
 const express = require("express");
-const { filterCollection } = require("../helpers");
+const { filterCollection, searchBarFilter } = require("../helpers");
 const {
   getProductByID,
   createProduct,
@@ -10,15 +10,11 @@ const { authenticateUser, allowAdminOnly } = require("../auth/authMiddleware");
 const router = express.Router();
 
 router.get("/", async (request, response, next) => {
-  try {
-    const result = await filterCollection("Product", request.query);
-    response.status(200).json({
-      status: 200,
-      data: result,
-    });
-  } catch (error) {
-    return next(error);
-  }
+  const result = await searchBarFilter("Product", request.query);
+  response.status(200).json({
+    status: 200,
+    data: result,
+  });
 });
 
 router.get("/:id", async (request, response, next) => {
