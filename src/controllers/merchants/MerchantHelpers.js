@@ -33,6 +33,7 @@ async function getMerchantStock(merchantID) {
     merchant = await Merchant.findById(merchantID)
       .populate({
         path: "stock",
+        model: "StockProduct",
         populate: {
           path: "_product",
           model: "Product",
@@ -85,6 +86,7 @@ async function updateStockQuantity(updateData) {
 async function createNewStockProduct(data) {
   try {
     const newStockProduct = await StockProduct.create(data);
+    console.log(data);
     await Merchant.updateOne(
       { _id: data._merchant },
       { $push: { stock: newStockProduct } }
