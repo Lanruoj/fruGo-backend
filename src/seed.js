@@ -19,6 +19,7 @@ const cities = [
   { name: "Perth", state: "Western Australia" },
   { name: "Adelaide", state: "South Australia" },
   { name: "Hobart", state: "Tasmania" },
+  { name: "Brisbane", state: "Queensland" },
 ];
 
 const customers = [
@@ -126,6 +127,16 @@ const merchants = [
     username: "hobart_merchant",
     name: "Hobart Merchant",
     description: "The best merchant in all of Hobart",
+    streetAddress: "1234 Merchant street",
+    _city: null,
+    stock: [],
+  },
+  {
+    email: "brisbane@email.com",
+    password: null,
+    username: "brisbane_merchant",
+    name: "Brisbane Merchant",
+    description: "The best merchant in all of Brisbane",
     streetAddress: "1234 Merchant street",
     _city: null,
     stock: [],
