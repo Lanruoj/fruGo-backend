@@ -187,6 +187,21 @@ const stockProducts = [
     _product: null,
     quantity: 103,
   },
+  {
+    _merchant: null,
+    _product: null,
+    quantity: 23,
+  },
+  {
+    _merchant: null,
+    _product: null,
+    quantity: 99,
+  },
+  {
+    _merchant: null,
+    _product: null,
+    quantity: 103,
+  },
 ];
 
 const carts = [
@@ -303,27 +318,6 @@ async function seedDatabase() {
           quantity: 3,
         };
       });
-      for ([index, order] of orders.entries()) {
-        order._customer = createdCustomers[0];
-        order._merchant = createdMerchants[0];
-        order._orderProducts = orderProducts;
-        createdOrders.push(order);
-      }
-      createdOrders = await Order.insertMany(createdOrders);
-      await Customer.findByIdAndUpdate(
-        createdCustomers[0]._id,
-        {
-          $push: { orders: { $each: createdOrders } },
-        },
-        { returnDocument: "after" }
-      );
-      await Merchant.findByIdAndUpdate(
-        createdMerchants[0]._id,
-        {
-          $push: { orders: { $each: createdOrders } },
-        },
-        { returnDocument: "after" }
-      );
     })
     .then(async () => {
       await mongoose.connection.close();
