@@ -52,7 +52,7 @@ router.get(
       const result = await filterCollection("Customer", request.query);
       response.status(200).json({
         status: 200,
-        result: result.flat(),
+        data: result.flat(),
       });
     } catch (err) {
       return next(err);
@@ -69,7 +69,7 @@ router.get(
     try {
       const result = await getCustomerByID(request.params.id);
       response.status(200).json({
-        result: result,
+        data: result,
       });
     } catch (err) {
       return next(err);
