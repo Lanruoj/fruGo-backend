@@ -19,6 +19,7 @@ const cities = [
   { name: "Perth", state: "Western Australia" },
   { name: "Adelaide", state: "South Australia" },
   { name: "Hobart", state: "Tasmania" },
+  { name: "Brisbane", state: "Queensland" },
 ];
 
 const customers = [
@@ -130,6 +131,16 @@ const merchants = [
     _city: null,
     stock: [],
   },
+  {
+    email: "brisbane@email.com",
+    password: null,
+    username: "brisbane_merchant",
+    name: "Brisbane Merchant",
+    description: "The best merchant in all of Brisbane",
+    streetAddress: "1234 Merchant street",
+    _city: null,
+    stock: [],
+  },
 ];
 
 const products = [
@@ -172,6 +183,21 @@ const products = [
 ];
 
 const stockProducts = [
+  {
+    _merchant: null,
+    _product: null,
+    quantity: 23,
+  },
+  {
+    _merchant: null,
+    _product: null,
+    quantity: 99,
+  },
+  {
+    _merchant: null,
+    _product: null,
+    quantity: 103,
+  },
   {
     _merchant: null,
     _product: null,
@@ -303,27 +329,6 @@ async function seedDatabase() {
           quantity: 3,
         };
       });
-      for ([index, order] of orders.entries()) {
-        order._customer = createdCustomers[0];
-        order._merchant = createdMerchants[0];
-        order._orderProducts = orderProducts;
-        createdOrders.push(order);
-      }
-      createdOrders = await Order.insertMany(createdOrders);
-      await Customer.findByIdAndUpdate(
-        createdCustomers[0]._id,
-        {
-          $push: { orders: { $each: createdOrders } },
-        },
-        { returnDocument: "after" }
-      );
-      await Merchant.findByIdAndUpdate(
-        createdMerchants[0]._id,
-        {
-          $push: { orders: { $each: createdOrders } },
-        },
-        { returnDocument: "after" }
-      );
     })
     .then(async () => {
       await mongoose.connection.close();

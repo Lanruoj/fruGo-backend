@@ -3,11 +3,13 @@ const { createCart } = require("../carts/CartHelpers");
 const { Cart } = require("../../models/Cart");
 const { generateAccessToken } = require("../helpers");
 const { getCustomersMerchant } = require("../customers/CustomerHelpers");
+const { City } = require("../../models/City");
 
 async function loginUser(userID, role) {
-  let user = await mongoose.model(role).findById(userID).exec();
+  let user = await mongoose.model(role).findById(userID);
   let cart;
   let merchant;
+  let city;
   // Log user in if not already logged in
   if (!user.loggedIn) {
     user = await mongoose
@@ -27,8 +29,11 @@ async function loginUser(userID, role) {
     merchant = await getCustomersMerchant(userID);
     cart = await Cart.findOne({ _customer: userID }).exec();
   }
+  if (role !== "Admin") {
+    city = await City.findById(user._city).exec();
+  }
   const accessToken = await generateAccessToken(userID);
-  return { user, cart, merchant, accessToken };
+  return { user, cart, merchant, city, accessToken };
 }
 
 async function logoutUser(userID, role) {

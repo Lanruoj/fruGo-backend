@@ -23,7 +23,9 @@ async function createCustomer(data) {
 async function getCustomerByID(customerID) {
   let customer;
   try {
-    customer = await Customer.findById(customerID).exec();
+    customer = await Customer.findById(customerID)
+      .populate({ path: "_city", model: "City" })
+      .exec();
   } catch (error) {
     throw {
       message: `: : No customer found with ID of ${customerID}`,
@@ -36,11 +38,12 @@ async function getCustomerByID(customerID) {
 async function updateCustomer(updateData) {
   const { id, data } = updateData;
   try {
-    return await Customer.findByIdAndUpdate(id, data, {
+    const result = await Customer.findByIdAndUpdate(id, data, {
       returnDocument: "after",
     })
       .lean()
       .exec();
+    console.log(result);
   } catch (err) {
     throw { message: ": : Customer could not be found", status: 400 };
   }

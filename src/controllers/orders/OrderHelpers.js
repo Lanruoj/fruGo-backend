@@ -21,6 +21,14 @@ async function getAllOrders() {
           },
         },
       })
+      .populate({
+        path: "_customer",
+        model: "Customer",
+        populate: {
+          path: "_city",
+          model: "City",
+        },
+      })
       .exec();
     if (!orders) {
       const error = new Error();
@@ -49,7 +57,16 @@ async function getOrderByID(orderID) {
           },
         },
       })
+      .populate({
+        path: "_customer",
+        model: "Customer",
+        populate: {
+          path: "_city",
+          model: "City",
+        },
+      })
       .exec();
+    console.log(order);
     if (!order) {
       const error = new Error();
       error.message = `: : No order found [${orderID}]`;
@@ -76,6 +93,14 @@ async function getOrdersByCustomerID(customerID, status) {
         },
       },
     })
+    .populate({
+      path: "_customer",
+      model: "Customer",
+      populate: {
+        path: "_city",
+        model: "City",
+      },
+    })
     .exec();
   if (status) {
     orders = orders.filter((order) => order.status == status);
@@ -94,6 +119,14 @@ async function getOrdersByMerchantID(merchantID, status) {
           path: "_product",
           model: "Product",
         },
+      },
+    })
+    .populate({
+      path: "_customer",
+      model: "Customer",
+      populate: {
+        path: "_city",
+        model: "City",
       },
     })
     .exec();
@@ -134,7 +167,27 @@ async function createOrder(customerID, data) {
     );
     await Cart.findOneAndDelete({ _customer: customerID });
     await createCart(customerID);
-    return order;
+    return await Order.findById(order._id)
+      .populate({
+        path: "_orderProducts",
+        populate: {
+          path: "stockProduct",
+          model: "StockProduct",
+          populate: {
+            path: "_product",
+            model: "Product",
+          },
+        },
+      })
+      .populate({
+        path: "_customer",
+        model: "Customer",
+        populate: {
+          path: "_city",
+          model: "City",
+        },
+      })
+      .exec();
   } catch (error) {
     console.log(error);
     error.message = ": : Could not create order";

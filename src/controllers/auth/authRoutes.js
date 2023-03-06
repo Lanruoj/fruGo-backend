@@ -6,7 +6,7 @@ const { validateLoginDetails, authenticateUser } = require("./authMiddleware");
 // Universal login
 router.post("/login", validateLoginDetails, async (request, response, next) => {
   try {
-    const { user, merchant, accessToken } = await loginUser(
+    const { user, merchant, city, accessToken } = await loginUser(
       request.user,
       request.role
     );
@@ -18,6 +18,8 @@ router.post("/login", validateLoginDetails, async (request, response, next) => {
       accessToken: accessToken,
     };
     if (merchant) responseObject.merchant = merchant;
+    if (city) responseObject.city = city;
+    console.log(responseObject);
     response.status(200).json(responseObject);
   } catch (error) {
     error.status = 401;

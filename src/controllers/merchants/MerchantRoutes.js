@@ -165,7 +165,7 @@ router.delete(
 );
 
 router.get(
-  "/:id/orders/",
+  "/:id/orders",
   authenticateUser,
   allowOwnerOrAdmin,
   async (request, response, next) => {
