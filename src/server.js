@@ -53,7 +53,7 @@ const corsOptions = {
   origin: [
     `http://${HOST}:${PORT}`,
     "http://localhost:3000",
-    "https://frugo.netlify.app/",
+    "https://frugo.netlify.app",
   ],
   optionsSuccessStatus: 200,
 };
