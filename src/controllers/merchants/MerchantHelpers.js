@@ -54,7 +54,7 @@ async function updateMerchant(updateData) {
   const { id, data } = updateData;
   try {
     return await Merchant.findByIdAndUpdate(id, data, {
-      returnDocument: "before",
+      returnDocument: "after",
     })
       .lean()
       .exec();
