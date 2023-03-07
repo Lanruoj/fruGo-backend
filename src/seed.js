@@ -180,40 +180,118 @@ const products = [
     price: 11,
     img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
   },
+  {
+    name: "Apricot",
+    type: "Fruit",
+    price: 3,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Watermelon",
+    type: "Fruit",
+    price: 12,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Orange",
+    type: "Fruit",
+    price: 3,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Mango",
+    type: "Fruit",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Capsicum",
+    type: "Vegetable",
+    price: 1.99,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Tomato",
+    type: "Vegetable",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Cauliflower",
+    type: "Vegetable",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Carrot",
+    type: "Vegetable",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Zucchini",
+    type: "Vegetable",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Bok choy",
+    type: "Vegetable",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Spinach",
+    type: "Vegetable",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Potato",
+    type: "Vegetable",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Peas",
+    type: "Vegetable",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Garlic",
+    type: "Root",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Mushroom",
+    type: "Vegetable",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Ginger",
+    type: "Root",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
+  {
+    name: "Mandarin",
+    type: "Fruit",
+    price: 5,
+    img: "https://upload.wikimedia.org/wikipedia/commons/thumb/8/83/Almonds.png/293px-Almonds.png",
+  },
 ];
 
-const stockProducts = [
-  {
-    _merchant: null,
-    _product: null,
-    quantity: 23,
-  },
-  {
-    _merchant: null,
-    _product: null,
-    quantity: 99,
-  },
-  {
-    _merchant: null,
-    _product: null,
-    quantity: 103,
-  },
-  {
-    _merchant: null,
-    _product: null,
-    quantity: 23,
-  },
-  {
-    _merchant: null,
-    _product: null,
-    quantity: 99,
-  },
-  {
-    _merchant: null,
-    _product: null,
-    quantity: 103,
-  },
-];
+// const stockProducts = products.map((product) => {
+//   const qty = Math.floor(Math.random() * 1000);
+//   return {
+//     _merchant: null,
+//     _product: null,
+//     quantity: qty,
+//   };
+// });
 
 const carts = [
   {
@@ -297,38 +375,26 @@ async function seedDatabase() {
         merchant._city = createdCities[index]._id;
       }
       const createdMerchants = await Merchant.insertMany(merchants);
+
       // Seed products
       const createdProducts = await Product.insertMany(products);
-      // Seed stock products
-      for ([index, stockProduct] of stockProducts.entries()) {
-        stockProduct._merchant = createdMerchants[0]._id;
-        stockProduct._product = createdProducts[index]._id;
+      for (let merchant of createdMerchants) {
+        let merchantStockProducts = [];
+        for (let product of createdProducts) {
+          const stockProduct = await StockProduct.create({
+            _merchant: merchant._id,
+            _product: product._id,
+            quantity: Math.floor(Math.random() * 1000),
+          });
+          const document = await StockProduct.findById(stockProduct._id)
+            .populate({ path: "_product", model: "Product" })
+            .exec();
+          merchantStockProducts.push(document);
+        }
+        await Merchant.findByIdAndUpdate(merchant._id, {
+          $push: { stock: { $each: merchantStockProducts } },
+        });
       }
-      const createdStockProducts = await StockProduct.insertMany(stockProducts);
-      // Insert stock products into merchants
-      await Merchant.updateMany(
-        {},
-        { $push: { stock: { $each: createdStockProducts } } }
-      );
-      // Seed carts
-      let cartProducts = [];
-      for ([index, stockProduct] of createdStockProducts.entries()) {
-        let cartProduct = createdStockProducts[index];
-        cartProducts.push(cartProduct);
-      }
-      const createdCart = await Cart.create({
-        _customer: createdCustomers[0]._id,
-        _merchant: createdMerchants[0]._id,
-        _cartProducts: cartProducts,
-      });
-      // Seed orders
-      let createdOrders = [];
-      const orderProducts = createdCart._cartProducts.map((cartProduct) => {
-        return {
-          stockProduct: cartProduct._id,
-          quantity: 3,
-        };
-      });
     })
     .then(async () => {
       await mongoose.connection.close();
