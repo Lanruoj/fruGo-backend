@@ -50,7 +50,11 @@ switch (process.env.NODE_ENV.toLowerCase()) {
 // Configure CORS settings
 const cors = require("cors");
 const corsOptions = {
-  origin: [`http://${HOST}:${PORT}`, "http://localhost:3000"],
+  origin: [
+    `http://${HOST}:${PORT}`,
+    "http://localhost:3000",
+    "https://frugo.netlify.app/",
+  ],
   optionsSuccessStatus: 200,
 };
 app.use(cors(corsOptions));
