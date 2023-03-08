@@ -57,6 +57,7 @@ const CustomerSchema = new mongoose.Schema({
     required: true,
   },
   _merchant: { type: mongoose.Schema.Types.ObjectId, ref: "Merchant" },
+  _cart: { type: mongoose.Schema.Types.ObjectId, ref: "Cart" },
   orders: [{ type: mongoose.Schema.Types.ObjectId, ref: "Order" }],
   loggedIn: {
     type: Boolean,
@@ -72,7 +73,9 @@ CustomerSchema.plugin(uniqueValidator, {
 
 // Hash password prior to saving
 CustomerSchema.pre("save", async function () {
-  this.password = await hashString(this.password);
+  if (this.password.length < 20) {
+    this.password = await hashString(this.password);
+  }
 });
 
 // Hash password prior to saving upon update
