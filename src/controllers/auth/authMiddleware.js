@@ -19,11 +19,11 @@ async function authenticateUser(request, response, next) {
     const foundMerchant = await Merchant.findById(userID).exec();
     const foundAdmin = await Admin.findById(userID).exec();
     const userDocument = foundCustomer || foundMerchant || foundAdmin;
-    if (!userDocument.loggedIn) {
-      let error = new Error();
-      error.message = ": : User not logged in";
-      throw error;
-    }
+    // if (!userDocument.loggedIn) {
+    //   let error = new Error();
+    //   error.message = ": : User not logged in";
+    //   throw error;
+    // }
     request.user = userDocument.id;
     request.role =
       (foundCustomer && "Customer") ||
