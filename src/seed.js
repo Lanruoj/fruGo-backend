@@ -10,6 +10,7 @@ const { Product } = require("./models/Product");
 const { StockProduct } = require("./models/StockProduct");
 const { Cart } = require("./models/Cart");
 const { Order } = require("./models/Order");
+const { createCustomer } = require("./controllers/customers/CustomerHelpers");
 
 const cities = [
   { name: "Melbourne", state: "Victoria" },
@@ -350,21 +351,23 @@ async function seedDatabase() {
     .then(async () => {
       // Seed cities
       const createdCities = await City.insertMany(cities);
-      // Hash each password & assign a city to each customer
-      for ([index, customer] of customers.entries()) {
-        customer.password = await hashString(process.env.USER_SEED_PASSWORD);
-        customer._city = createdCities[index]._id;
-      }
-      const createdCustomers = await Customer.insertMany(customers);
-      // Seed admin
-      admin.password = await hashString(process.env.ADMIN_SEED_PASSWORD);
-      const createdAdmin = await Admin.insertMany(admin);
       // Seed merchants
       for ([index, merchant] of merchants.entries()) {
         merchant.password = await hashString(process.env.USER_SEED_PASSWORD);
         merchant._city = createdCities[index]._id;
       }
       const createdMerchants = await Merchant.insertMany(merchants);
+      // Hash each password & assign a city to each customer
+      let createdCustomers = [];
+      for ([index, customer] of customers.entries()) {
+        customer.password = await hashString(process.env.USER_SEED_PASSWORD);
+        customer._city = createdCities[index]._id;
+        let newCustomer = await createCustomer(customer);
+        createdCustomers.push(newCustomer);
+      }
+      // Seed admin
+      admin.password = await hashString(process.env.ADMIN_SEED_PASSWORD);
+      const createdAdmin = await Admin.insertMany(admin);
       // Seed products
       const createdProducts = await Product.insertMany(products);
       for (let merchant of createdMerchants) {
