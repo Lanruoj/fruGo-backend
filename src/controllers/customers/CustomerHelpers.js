@@ -2,6 +2,7 @@ const { omit } = require("underscore");
 const { Customer } = require("../../models/Customer");
 const { City } = require("../../models/City");
 const { Merchant } = require("../../models/Merchant");
+const { Cart } = require("../../models/Cart");
 
 async function createCustomer(data) {
   try {
@@ -16,7 +17,15 @@ async function createCustomer(data) {
     const customer = await Customer.create({
       ...data,
       _merchant: merchant._id,
+      _cart: null,
     });
+    const cart = await Cart.create({
+      _merchant: merchant._id,
+      _customer: customer._id,
+      _cartProducts: [],
+    });
+    customer._cart = cart._id;
+    customer.save();
     return customer;
   } catch (error) {
     console.log(error);
