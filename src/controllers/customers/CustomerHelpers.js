@@ -12,7 +12,11 @@ async function createCustomer(data) {
         status: 404,
       };
     }
-    const customer = await Customer.create(data);
+    const merchant = await Merchant.findOne({ _city: cityExists._id }).exec();
+    const customer = await Customer.create({
+      ...data,
+      _merchant: merchant._id,
+    });
     return customer;
   } catch (error) {
     console.log(error);
