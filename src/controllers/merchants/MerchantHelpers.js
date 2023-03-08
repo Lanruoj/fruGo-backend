@@ -117,8 +117,9 @@ async function removeStockProduct(data) {
 async function searchStockProducts(merchantID, queryString) {
   const queries = Object.entries(queryString);
   let queryArray = [];
-  if (!queryString)
+  if (!queries.length) {
     return await StockProduct.find({ _merchant: merchantID }).exec();
+  }
   for (let query of queries) {
     let queryObject = {};
     const valueIsObjectId = mongoose.isValidObjectId(query[1]);
