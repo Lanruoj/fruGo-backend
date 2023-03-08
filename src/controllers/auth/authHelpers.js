@@ -9,6 +9,7 @@ const { Customer } = require("../../models/Customer");
 const { Admin } = require("../../models/Admin");
 
 async function loginUser(userID, role) {
+  let user;
   // Log user in if not already logged in
   if (role == "Customer") {
     user = await Customer.findByIdAndUpdate(
@@ -18,6 +19,14 @@ async function loginUser(userID, role) {
     )
       .populate({ path: "_city", model: "City" })
       .populate({ path: "_merchant", model: "Merchant" })
+      .populate({
+        path: "_cart",
+        model: "Cart",
+        populate: {
+          path: "_cartProducts",
+          populate: { path: "_id", model: "StockProduct" },
+        },
+      })
       .exec();
   } else if (role == "Merchant") {
     user = await Merchant.findByIdAndUpdate(
