@@ -4,36 +4,38 @@ const { Cart } = require("../../models/Cart");
 const { generateAccessToken } = require("../helpers");
 const { getCustomersMerchant } = require("../customers/CustomerHelpers");
 const { City } = require("../../models/City");
+const { Merchant } = require("../../models/Merchant");
+const { Customer } = require("../../models/Customer");
+const { Admin } = require("../../models/Admin");
 
 async function loginUser(userID, role) {
-  let user = await mongoose.model(role).findById(userID);
-  let cart;
-  let merchant;
-  let city;
   // Log user in if not already logged in
-  if (!user.loggedIn) {
-    user = await mongoose
-      .model(role)
-      .findByIdAndUpdate(
-        userID,
-        { loggedIn: true },
-        { returnDocument: "after" }
-      )
+  if (role == "Customer") {
+    user = await Customer.findByIdAndUpdate(
+      userID,
+      { loggedIn: true },
+      { returnDocument: "after" }
+    )
+      .populate({ path: "_city", model: "City" })
+      .populate({ path: "_merchant", model: "Merchant" })
       .exec();
-    // If user is a customer, create a cart
-    if (role == "Customer") {
-      cart = await createCart(userID);
-    }
-  }
-  if (user.loggedIn && role == "Customer") {
-    merchant = await getCustomersMerchant(userID);
-    cart = await Cart.findOne({ _customer: userID }).exec();
-  }
-  if (role !== "Admin") {
-    city = await City.findById(user._city).exec();
+  } else if (role == "Merchant") {
+    user = await Merchant.findByIdAndUpdate(
+      userID,
+      { loggedIn: true },
+      { returnDocument: "after" }
+    )
+      .populate({ path: "_city", model: "City" })
+      .exec();
+  } else if (role == "Admin") {
+    user = await Admin.findByIdAndUpdate(
+      userID,
+      { loggedIn: true },
+      { returnDocument: "after" }.exec()
+    );
   }
   const accessToken = await generateAccessToken(userID);
-  return { user, cart, merchant, city, accessToken };
+  return { user, accessToken };
 }
 
 async function logoutUser(userID, role) {
