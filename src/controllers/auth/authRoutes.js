@@ -6,10 +6,7 @@ const { validateLoginDetails, authenticateUser } = require("./authMiddleware");
 // Universal login
 router.post("/login", validateLoginDetails, async (request, response, next) => {
   try {
-    const { user, merchant, city, accessToken } = await loginUser(
-      request.user,
-      request.role
-    );
+    const { user, accessToken } = await loginUser(request.user, request.role);
     const responseObject = {
       status: 200,
       message: "You have been logged in",
@@ -17,9 +14,6 @@ router.post("/login", validateLoginDetails, async (request, response, next) => {
       role: request.role,
       accessToken: accessToken,
     };
-    if (merchant) responseObject.merchant = merchant;
-    if (city) responseObject.city = city;
-    console.log(responseObject);
     response.status(200).json(responseObject);
   } catch (error) {
     error.status = 401;
