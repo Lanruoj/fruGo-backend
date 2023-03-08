@@ -26,18 +26,6 @@ const CartSchema = new mongoose.Schema(
   }
 );
 
-CartSchema.pre("find", function (next) {
-  this.populate({
-    path: "_cartProducts",
-    populate: {
-      path: "_stockProduct",
-      model: "StockProduct",
-      populate: { path: "_product", model: "Product" },
-    },
-  });
-  next();
-});
-
 const Cart = mongoose.model("Cart", CartSchema);
 
 module.exports = { Cart };
