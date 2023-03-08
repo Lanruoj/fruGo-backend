@@ -24,14 +24,10 @@ const { getOrdersByCustomerID } = require("../orders/OrderHelpers");
 router.post("/register", async (request, response, next) => {
   try {
     const newCustomer = await createCustomer(request.body);
-    const { user, merchant, accessToken } = await loginUser(
-      newCustomer._id,
-      "Customer"
-    );
+    const { user, accessToken } = await loginUser(newCustomer._id, "Customer");
     response.status(201).json({
       status: 201,
       user: user,
-      merchant: merchant,
       role: "Customer",
       accessToken: accessToken,
     });
