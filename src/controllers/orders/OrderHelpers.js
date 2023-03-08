@@ -166,7 +166,8 @@ async function createOrder(customerID, data) {
       { returnDocument: "after" }
     );
     await Cart.findOneAndDelete({ _customer: customerID });
-    await createCart(customerID);
+    const newCart = await createCart(customerID);
+    await Customer.findByIdAndUpdate(customerID, { _cart: newCart._id }).exec();
     return await Order.findById(order._id)
       .populate({
         path: "_orderProducts",
