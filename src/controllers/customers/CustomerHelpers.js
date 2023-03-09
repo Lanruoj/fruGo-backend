@@ -38,6 +38,8 @@ async function getCustomerByID(customerID) {
   try {
     customer = await Customer.findById(customerID)
       .populate({ path: "_city", model: "City" })
+      .populate({ path: "_cart", model: "Cart" })
+      .populate({ path: "_merchant", model: "Merchant" })
       .exec();
   } catch (error) {
     throw {
@@ -54,6 +56,9 @@ async function updateCustomer(updateData) {
     const result = await Customer.findByIdAndUpdate(id, data, {
       returnDocument: "after",
     })
+      .populate({ path: "_city", model: "City" })
+      .populate({ path: "_cart", model: "Cart" })
+      .populate({ path: "_merchant", model: "Merchant" })
       .lean()
       .exec();
     console.log(result);
