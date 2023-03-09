@@ -118,7 +118,10 @@ async function searchStockProducts(merchantID, queryString) {
   const queries = Object.entries(queryString);
   let queryArray = [];
   if (!queries.length) {
-    return await StockProduct.find({ _merchant: merchantID }).exec();
+    const result = await StockProduct.find({ _merchant: merchantID })
+      .populate({ path: "_product", model: "Product" })
+      .exec();
+    return result;
   }
   for (let query of queries) {
     let queryObject = {};
