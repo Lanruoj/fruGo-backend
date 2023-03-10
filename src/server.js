@@ -26,7 +26,7 @@ app.use(
 let databaseURL, HOST, PORT;
 switch (process.env.NODE_ENV.toLowerCase()) {
   case "test":
-    databaseURL = process.env.TEST_DATABASE_URL;
+    databaseURL = process.env.DEV_DATABASE_URL;
     HOST = process.env.DEV_HOST;
     PORT = process.env.DEV_PORT;
     break;
