@@ -323,7 +323,7 @@ async function seedDatabase() {
   let databaseURL;
   switch (process.env.NODE_ENV.toLowerCase()) {
     case "test":
-      databaseURL = process.env.TEST_DATABASE_URL;
+      databaseURL = process.env.DEV_DATABASE_URL;
       break;
     case "development":
       databaseURL = process.env.DEV_DATABASE_URL;
