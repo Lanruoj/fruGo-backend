@@ -2,4 +2,6 @@
 .DS_Store
 .env
 
+env.txt
+
 /tests/database.test.js
