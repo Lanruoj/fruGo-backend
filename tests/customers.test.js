@@ -6,17 +6,17 @@ const { City } = require("../src/models/City");
 const { Admin } = require("../src/models/Admin");
 const { Customer } = require("../src/models/Customer");
 const { seedDatabase } = require("../src/seed");
-const { generateAccessToken } = require("../src/controllers/auth/authHelpers");
-
+const { generateAccessToken } = require("../src/controllers/helpers");
 describe("Customer routes", () => {
   beforeAll(async () => {
     await seedDatabase();
-    await mongoose.connect(process.env.TEST_DATABASE_URL);
+    await mongoose.connect(process.env.DEV_DATABASE_URL);
   });
 
   describe("[POST] /register - register a new customer", () => {
     it("Registers a new customer", async () => {
       const city = await City.findOne({}).exec();
+      console.log(city);
       const response = await request(app)
         .post("/customers/register")
         .send({
@@ -25,11 +25,11 @@ describe("Customer routes", () => {
           username: "testusername",
           firstName: "Test",
           lastName: "Lastname",
-          city: city._id,
+          _city: city._id,
           streetAddress: "123 Test street",
         });
       expect(response.statusCode).toEqual(201);
-      expect(response.body.customer._id).toBeDefined();
+      expect(response.body.user._id).toBeDefined();
       expect(response.body.accessToken).toBeTruthy();
     });
   });
@@ -51,7 +51,7 @@ describe("Customer routes", () => {
         .get("/customers/")
         .set("Authorization", `Bearer ${adminToken}`);
       expect(response.statusCode).toEqual(200);
-      const jsonCount = response.body.customers.length;
+      const jsonCount = response.body.data.length;
       expect(jsonCount).toEqual(dbCount);
     });
     it("Customer token denies access", async () => {
